@@ -1149,7 +1149,24 @@ void Literals( void ) {
 
 //-----------------------------------------------------------------------------
 
+void SameRankTypePromotion() {
+
+	signed   int negativeOne =  -1;
+	unsigned int positiveOne =  +1;
+
+	_Bool result =false;
+
+	result = positiveOne < negativeOne;
+
+}//SameRankTypePromotion
+
+//-----------------------------------------------------------------------------
+
+
 int main( int argc, char** argv ) {
+
+    SameRankTypePromotion();
+
 
 	Literals();
 
@@ -1187,4 +1204,3 @@ int main( int argc, char** argv ) {
 }//main
 
 //-----------------------------------------------------------------------------
-
