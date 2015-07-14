@@ -462,27 +462,6 @@ void EveryIdentifierHasAnAddress( void ) {
 
 //-----------------------------------------------------------------------------
 
-void ImplicitTypeConversations( void ) {
-
-  char  c  = 2;
-  short s  = 3;
-  int   i  = 5;
-  unsigned int u = 6;
-
-  i = i + c;
-
-  i = i + s;
-
-  i = i + u;
-
-  float f = 1.5F + i;
-
-  long long l = 1L + c;
-
-}//ImplicitTypeConversations
-
-//-----------------------------------------------------------------------------
-
 void RelationalOperators(void){
 
   int a = 2;
@@ -1175,11 +1154,30 @@ void SameWidthTypePromotion( void ) {
 
 void TypePromotion( void ) {
 
+	// implicit casting
+
 	int   i =  1;
 	float f =  0.10F;
 	float r =  0.00F;
 
 	r = f + i;
+
+    //
+	char  c  = 2;
+	short s  = 3;
+	int   i  = 5;
+	unsigned int u = 6;
+
+	i = i + c;
+
+	i = i + s;
+
+	i = i + u;
+
+	float f = 1.5F + i;
+
+	long long l = 1L + c;
+
 
 }//TypePromotion
 
