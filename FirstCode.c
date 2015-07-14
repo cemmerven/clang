@@ -130,6 +130,9 @@ void Float( void ) {
    fB = 1.0F / .00F;
    fB = INFINITY;
 
+   float posInf =  1.0F / 0.0F;
+   float negInf = -1.0F / 0.0F;
+
    fA = NAN;
    result = fA == fA;
 
