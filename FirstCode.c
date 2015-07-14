@@ -19,71 +19,30 @@
 #include <stdlib.h>
 
 #include <stdbool.h>
-
-#include <GL/glut.h>
 #include <sys/mman.h>
 
 
 // terminal I/O
 #include <termios.h>
-/*
-//-----------------------------------------------------------------------------
-
-static int pixels[] = {
-	999,999,999,999,999,999,999,999,999,999,999,999,999,999,
-	999,999,999,999,999,999,999,999,999,999,999,999,999,999
-};
 
 //-----------------------------------------------------------------------------
 
-void render( void ) {
-       glClearColor(1.0,1.0,1.0,1.0);
-       glColor3f(0.0,0.0,0.0);
-       glClear(GL_COLOR_BUFFER_BIT);
-       glBegin(GL_LINE_LOOP);
-          glVertex3f(-0.8,-0.8,0.0);
-          glVertex3f( 0.8,-0.8,0.0);
-          glVertex3f( 0.8, 0.8,0.0);
-          glVertex3f(-0.8, 0.8,0.0);
-          glDrawPixels( 400, 400, GL_COLOR_INDEX, GL_BITMAP, pixels );
-       glEnd();
-       glFlush();
 
-}//render
-
-//-----------------------------------------------------------------------------
-
-void ShowWindow( int argc, char** argv ) {
-
-	int  xargc = 1;
-	char *xargv[] = { (char*) "gldebug" };
-
-	glutInit( &xargc, xargv );
-	glutInitWindowPosition(100,100);
-	glutInitWindowSize(500,500);
-	glutCreateWindow( "Hello World" );
-	glutDisplayFunc( render );
-	glutMainLoop();
-
-}//ShowWindow
-
-//-----------------------------------------------------------------------------
-
-/ *  Return the ULP of q.
+/*  Return the ULP of q.
 
     This was inspired by Algorithm 3.5 in Siegfried M. Rump, Takeshi Ogita, and
     Shin'ichi Oishi, "Accurate Floating-Point Summation", _Technical Report
     05.12_, Faculty for Information and Communication Sciences, Hamburg
     University of Technology, November 13, 2005.
-* /
+*/
 float ULP( float q ) {
 
     // SmallestPositive is the smallest positive floating-point number.
     static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
 
-    / *  Scale is .75 ULP, so multiplying it by any significand in [1, 2) yields
+    /*  Scale is .75 ULP, so multiplying it by any significand in [1, 2) yields
         something in [.75 ULP, 1.5 ULP) (even with rounding).
-    * /
+    */
     static const float Scale = 0.75 * FLT_EPSILON;
 
     q = fabs(q);
@@ -95,26 +54,86 @@ float ULP( float q ) {
 
 //-----------------------------------------------------------------------------
 
-/ *  Return the next floating-point value after the finite value q.
+/*  Return the next floating-point value after the finite value q.
 
     This was inspired by Algorithm 3.5 in Siegfried M. Rump, Takeshi Ogita, and
     Shin'ichi Oishi, "Accurate Floating-Point Summation", _Technical Report
     05.12_, Faculty for Information and Communication Sciences, Hamburg
     University of Technology, November 13, 2005.
-* /
+*/
+
 float NextAfter( float q ) {
     // SmallestPositive is the smallest positive floating-point number.
     static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
 
     /*  Scale is .625 ULP, so multiplying it by any significand in [1, 2)
         yields something in [.625 ULP, 1.25 ULP].
-    * /
+    */
     static const float Scale = 0.625 * FLT_EPSILON;
 
     // link with linker command line option -lm (Link Math library) otherwise fmax goes undefined
     return q + fmax(SmallestPositive, fabs(q)*Scale);
 
 }//NextAfter
+
+
+//-----------------------------------------------------------------------------
+
+void Integers( void ) {
+
+	char c    = 0;
+	int count = 0;
+	int value = 0;
+
+	// NOT : char tipinin bit sayısı plartforma göre değişebilir.
+	// Her platformda 8 bit (1 Byte) olmak zorunda değil.
+	count = CHAR_BIT;
+
+	value = CHAR_MIN;
+	value = CHAR_MAX;
+
+}//Integers
+
+//-----------------------------------------------------------------------------
+
+void Float( void ) {
+
+   float fA = .0F;
+   float fB = .0F;
+
+   unsigned int count = 0;
+   int value = 0;
+   size_t size = 0;
+
+   // char tipinin katları olarak bellekte kapladığı alan
+   size = sizeof( float );
+   size = sizeof( fA );
+
+   // bit sayısı
+   size =  CHAR_BIT * sizeof( float );
+
+   _Bool result = true;
+
+   fA = FLT_MIN;
+   fA = FLT_MAX;
+
+   // precision  0.000000
+   count = FLT_DIG;
+
+   //  base 10 of the exponent part of a float.
+   value = FLT_MIN_10_EXP;
+   value = FLT_MAX_10_EXP;
+
+   fA = .0F / .0F;
+
+   fB = sqrtf( -1.00F );
+   fB = 1.0F / .00F;
+   fB = INFINITY;
+
+   fA = NAN;
+   result = fA == fA;
+
+}//Float
 
 //-----------------------------------------------------------------------------
 
@@ -301,6 +320,112 @@ void Pointers2( void ) {
 
 //-----------------------------------------------------------------------------
 
+void Literals( void ) {
+
+   // size as multiples of char
+   size_t size = 0;
+
+   // GCC -std=c99 komut satırı parametresi ve #include<stdbool.h> gerekli
+   _Bool result = false;
+
+/*
+    Decimal: 97
+   	Hex    : 0x61
+   	Binary : 0b01100001
+   	Octal  : 0141
+*/
+   char c = 0;
+
+   c = 97;   // decimal (base 10) literal
+   c = 0x61; // hexadecimal (base 16) literal
+   c = 0141; // octal (base 8) literal
+   c = 'a';  // character literal
+
+   // binary literal, gcc specific
+   c = 0b01100001;
+
+   // single char literals (ASCII)
+   char c01 = 'a';
+   char c02 = -67;
+   char c03 = '\0';
+   char c04 = 0;
+
+   char c05 = ' ';
+   char c06 = '\\';
+   //char c07 = ''';
+
+   // non printable chars (escape sequence)
+   char c08 = '"';
+   char c09 = '\a';
+   char c10 = '\b';
+   char c11 = '\f';
+   char c12 = '\n';
+   char c13 = '\r';
+   char c14 = '\t';
+   char c15 = '\v';
+
+   char c16 = '\456';
+   char c17 = '\xAF';
+
+   unsigned short     c18 = '\u20AC';
+   unsigned short int c19 = '\u20AC';
+   unsigned int       c20 = '\U40FFAA11';
+
+   signed int si1 = -3;
+   int        si2 = -3;
+
+   long int liA = 10L;
+   long     liB = 10L;
+
+   long long int  lliA = 10LL;
+   long long      lliB = 10LL;
+
+   unsigned long long int ulliA = 10ULL;
+   unsigned long long     ulliB = 10ULL;
+
+   char text01[] = "hello";
+   //char text02[] = "I'm";
+   //char text03[] = "C:\Windows\System32\drivers\";
+   //char text04[] = "he said "hello"";
+   //char text05[] = "he said "hello"";
+
+   // UNICODE char literal
+   wchar_t wc01 = L'ç';
+   size = sizeof( wc01 );
+
+
+   // UNICODE string literal
+   wchar_t text06[] = L"ĞÜŞİÖÇ ğüşiöç Iı";
+   size = sizeof( text06 );
+
+
+   // IEEE 754 single precision floating point number (4 Byte)
+   float f01 = 0;
+   float f02 = .0;
+   float f03 = .0F;
+   float f04 = 3.14F;
+   float f05 = FLT_EPSILON;
+
+   float pi          = 3.14159;
+   float aMole       = 6.02E23;
+   float anotherMole = 6.022e23;
+
+   float electronCharge = 1.60217657e-19;
+   float protonMass     = 1.67262178e-27;
+
+
+   // IEEE 754 double precision floating point number (8 Byte)
+   double d01 = .0;
+   double d02 = .456;
+   double d03 = DBL_EPSILON;
+
+   // intel specific extendet 80bit (10 Byte)
+   long double ld01 = LDBL_EPSILON;
+
+
+}//Literals
+
+//-----------------------------------------------------------------------------
 
 void EveryIdentifierHasAnAddress( void ) {
 
@@ -433,15 +558,15 @@ int add( int a, int b ) {
 	return a + b;
 }
 
-int sub( int a,int b ) {
+int sub( int a, int b ) {
 	return a - b;
 }
 
-int mul( int a,int b ) {
+int mul( int a, int b ) {
 	return a * b;
 }
 
-int idv( int a,int b ) {
+int idv( int a, int b ) {
 	return a / b;
 }
 
@@ -465,7 +590,7 @@ int idv( int a,int b ) {
  *
  * RETURN:
  * void
- * /
+ */
 void parseArguments( char** in_values, char* out_operator, int* out_operandA, int* out_operandB ) {
 
 	*out_operator = in_values[ 1 ][ 0 ];
@@ -502,7 +627,7 @@ void parseArguments( char** in_values, char* out_operator, int* out_operandA, in
 /*
  *  Eclipse, komut satırı parametrelerini belirle:
  *  Run => Debug Configurations... => tab[Arguments] => textbox[Program arguments]: + 1234 789
- * /
+ */
 int functionPointerSample( int argc, char** argv ) {
 
 	const int minArgs = 4;
@@ -732,7 +857,6 @@ void multiDimensionalArrays() {
 	}//fork
 
 }//multiDimensionalArrays
-*/
 
 //-----------------------------------------------------------------------------
 
@@ -863,7 +987,7 @@ void bitManipulation() {
 	result = resetBit( result, mostSignificantBit );
 
 	int a = 3;
-	int b = 3;
+	int b = 5;
 	xorSwap( &a, &b );
 
 	xorIsNonDestructiveOperation();
@@ -955,7 +1079,7 @@ static inline void swap( int *x, int *y ) {
 }//swap
 
 //-----------------------------------------------------------------------------
-/*
+
 void targetFound( void ) {
    // ilginç bi'şey yap burada
 }//targetFound
@@ -1021,25 +1145,6 @@ CLEANUP:
 	free( buffer );
 
 }//goodGotosAlwaysBranchesForward
-*/
-
-//-----------------------------------------------------------------------------
-
-int terminalReadWrite( void ){
-
-	char portName[] = "/dev/ttyS0";
-	char accessType[] = "a+";
-
-	FILE* port = fopen( portName, accessType );
-	if ( port == NULL ) {
-
-	  return EXIT_FAILURE;
-
-	}
-
-
-
-}//terminalReadWrite
 
 //-----------------------------------------------------------------------------
 
@@ -1055,101 +1160,7 @@ typedef union {
 
 }FloatBits;
 
-void Literals( void ) {
-
-   // GCC -std=c99 komut satırı parametresi ve #include<stdbool.h> gerekli
-   _Bool result = false;
-
-/*
-    Decimal: 97
-   	Hex    : 0x61
-   	Binary : 0b01100001
-   	Octal  : 0141
-*/
-   char c = 0;
-
-   c = 97;   // decimal (base 10) literal
-   c = 0x61; // hexadecimal (base 16) literal
-   c = 0141; // octal (base 8) literal
-   c = 'a';  // character literal
-
-   // binary literal, gcc specific
-   c = 0b01100001;
-
-   // single char literals (ASCII )
-   char c01 = 'a';
-   char c02 = -67;
-   char c03 = '\0';
-   char c04 = 0;
-
-   char c05 = ' ';
-   char c06 = '\\';
-   //char c07 = ''';
-
-   // non printable chars (escape sequence)
-   char c08 = '"';
-   char c09 = '\a';
-   char c10 = '\b';
-   char c11 = '\f';
-   char c12 = '\n';
-   char c13 = '\r';
-   char c14 = '\t';
-   char c15 = '\v';
-
-   char c16 = '\456';
-   char c17 = '\xAF';
-   unsigned short     c18 = '\u20AC';
-   unsigned short int c19 = '\u20AC';
-   unsigned int       c20 = '\U40FFAA11';
-
-   signed int si1 = -3;
-   int        si2 = -3;
-
-   char text01[] = "hello";
-   //char text02[] = "I'm";
-   //char text03[] = "C:\Windows\System32\drivers\";
-   //char text04[] = "he said "hello"";
-   //char text05[] = "he said "hello"";
-
-   // UNICODE char literal
-   wchar_t wc01 = L'ç';
-
-   // UNICODE string literal
-   wchar_t text06[] = L"ĞÜŞİÖÇ ğüşiöç Iı";
-
-
-   // IEEE 754 single precision floating point number (4 Byte)
-   float f01 = 0 ;
-   float f02 = .0;
-   float f03 = .0F;
-   float f04 = 3.14F;
-   float f05 = FLT_EPSILON;
-
-   float pi          = 3.14159;
-   float aMole       = 6.02E23;
-   float anotherMole = 6.022e23;
-
-   float electronCharge = 1.60217657e-19;
-   float protonMass     = 1.67262178e-27;
-
-
-   // IEEE 754 double precision floating point number (8 Byte)
-   double d01 = .0;
-   double d02 = .456;
-   double d03 = DBL_EPSILON;
-
-   // intel specific extendet 80bit (10 Byte)
-   long double ld01 = LDBL_EPSILON;
-
-   // 64 bits (8 Byte)
-   long long gg = 10L;
-   unsigned long long ugg = 10L;
-
-}//Literals
-
-//-----------------------------------------------------------------------------
-
-void SameRankTypePromotion() {
+void SameWidthTypePromotion( void ) {
 
 	signed   int negativeOne =  -1;
 	unsigned int positiveOne =  +1;
@@ -1158,15 +1169,129 @@ void SameRankTypePromotion() {
 
 	result = positiveOne < negativeOne;
 
-}//SameRankTypePromotion
+}//SameWidthTypePromotion
 
 //-----------------------------------------------------------------------------
 
+void TypePromotion( void ) {
+
+	int   i =  1;
+	float f =  0.10F;
+	float r =  0.00F;
+
+	r = f + i;
+
+}//TypePromotion
+
+//-----------------------------------------------------------------------------
+
+void EvaluationOrderA( void ) {
+
+   int a = 1;
+   int b = 2;
+   int c = 3;
+   int d = 4;
+
+   d = a + b - c + 3;
+
+}//EvaluationOrderA
+
+//-----------------------------------------------------------------------------
+
+void EvaluationOrderB( void ) {
+
+   int a = 1;
+   int b = 2;
+   int c = 3;
+   int d = 4;
+
+   d = a + b * c + 3;
+
+}//EvaluationOrderB
+
+//-----------------------------------------------------------------------------
+
+void EvaluationOrderC( void ) {
+
+   int a = 1;
+   int b = 2;
+   int c = 3;
+   int d = 4;
+
+   d = a = b = c = 5;
+
+}//ExpressionEvaluationOrderC
+
+void ArithmeticModulus( void ) {
+
+   int r = 0;
+
+   r = +5 % 3;
+   r = -5 % 3;
+   r = +5 % -3;
+
+   r = 3 % 5;
+   r = 3 % -5;
+
+   r = (int)7.99F % 5;
+
+}//ArithmeticModulus
+
+//-----------------------------------------------------------------------------
+
+int f( void ) { return 3; }
+
+void ExpressionEvaluationOrder( void ) {
+
+	int a = 0;
+	float c = 0;
+
+	1 + 2 * 2 ;
+	1 + (2 * 2);
+
+	1 + 2 * 2 * 4;
+	1 + ( (2 * 2) * 4 );
+
+	( 1 + 2 ) * 2 * 4;
+	( (1 + 2) * 2 ) * 4;
+
+	1 + 4, c = 2 | 3 + 5;
+	( 1 + 4 ), ( c = ( 2 | ( 3 + 5 ) ) );
+
+	1 + 5 & 4 == 3;
+	(1 + 5) & (4 == 3);
+
+	// series of constant expressions
+	3 , 4 , 5;
+
+	// ! : not a 1.99 double
+	c = 1,99;
+	(c=1) , 99;
+
+	!a++ + ~f();
+	( !(a++) ) + ( ~(f()) );
+
+}//ExpressionEvaluationOrder
+
+//-----------------------------------------------------------------------------
 
 int main( int argc, char** argv ) {
 
-    SameRankTypePromotion();
 
+	// precedence of post increment
+	   int i[] = {3, 5};
+	   int *p = i;
+	   int j = --*p++;
+
+
+
+
+	TypePromotion();
+	ArithmeticModulus();
+	//SameWidthTypePromotion();
+
+
+	ExpressionEvaluationOrder();
 
 	Literals();
 
@@ -1188,7 +1313,7 @@ int main( int argc, char** argv ) {
     fb.bv.sign = 0;
 
 
-	terminalReadWrite();
+
 	//multiDimensionalArrays();
 	//return functionPointerSample( argc, argv );
 	//enumerationSample();
