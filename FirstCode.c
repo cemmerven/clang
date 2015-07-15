@@ -85,12 +85,27 @@ void Integers( void ) {
 	int count = 0;
 	int value = 0;
 
+	int           a = 1;
+	unsigned int ub = 1;
+
+	size_t size = 0;
+
 	// NOT : char tipinin bit sayısı plartforma göre değişebilir.
 	// Her platformda 8 bit (1 Byte) olmak zorunda değil.
 	count = CHAR_BIT;
 
 	value = CHAR_MIN;
 	value = CHAR_MAX;
+
+	size = sizeof( char );
+	size = sizeof( c );
+
+	size = sizeof( int );
+	size = sizeof( unsigned int );
+	count = CHAR_BIT * sizeof( unsigned int );
+
+	size = sizeof( a);
+	size = sizeof( ub );
 
 }//Integers
 
@@ -211,7 +226,6 @@ void FloatQuirks( void ) {
 }//FloatQuirks
 
 //-----------------------------------------------------------------------------
-
 
 void Pointers1( void ) {
 
@@ -424,7 +438,6 @@ void Literals( void ) {
 
    // intel specific extendet 80bit (10 Byte)
    long double ld01 = LDBL_EPSILON;
-
 
 }//Literals
 
@@ -1043,7 +1056,6 @@ void bitFields( void ) {
 	real.decimal  = 1234;
 	real.fraction = 0;
 
-
 }//bitFields
 
 //-----------------------------------------------------------------------------
@@ -1054,7 +1066,7 @@ static inline void swap( int *x, int *y ) {
     if ( x == y )
     	return;
 
-    *x ^= *y;
+   *x ^= *y;
 	*y ^= *x;
 	*x ^= *y;
 
@@ -1142,22 +1154,7 @@ typedef union {
 
 }FloatBits;
 
-void SameWidthTypePromotion( void ) {
-
-	signed   int negativeOne =  -1;
-	unsigned int positiveOne =  +1;
-
-	_Bool result =false;
-
-	result = positiveOne < negativeOne;
-
-}//SameWidthTypePromotion
-
-//-----------------------------------------------------------------------------
-
 void TypePromotion( void ) {
-
-	// implicit casting
 
 	int   i =  1;
 	float f =  0.10F;
@@ -1165,10 +1162,8 @@ void TypePromotion( void ) {
 
 	r = f + i;
 
-    //
 	char  c  = 2;
 	short s  = 3;
-	int   i  = 5;
 	unsigned int u = 6;
 
 	i = i + c;
@@ -1177,17 +1172,46 @@ void TypePromotion( void ) {
 
 	i = i + u;
 
-	float f = 1.5F + i;
-
 	long long l = 1L + c;
-
 
 }//TypePromotion
 
 //-----------------------------------------------------------------------------
 
+void TypePromotionPromoteToInt( void ) {
+
+	// see disassembly
+	// all ranks lower than int (signed or unsigned), promote to int
+	_Bool b =  false;
+	char  c =  'a';
+	short s =  -8;
+
+	int r = 0;
+
+	r = b + c + s;
+
+}//TypePromotionPromoteToInt
+
+//-----------------------------------------------------------------------------
+
+void TypePromotionSameWidth( void ) {
+
+	// see disassembly
+	// same size different rank
+	signed   int negativeOne =  -1;
+	unsigned int positiveOne =  +1;
+
+	_Bool result = false;
+
+	result = positiveOne < negativeOne;
+
+}//TypePromotionSameWidth
+
+//-----------------------------------------------------------------------------
+
 void EvaluationOrderA( void ) {
 
+	// see disassembly
    int a = 1;
    int b = 2;
    int c = 3;
@@ -1201,6 +1225,7 @@ void EvaluationOrderA( void ) {
 
 void EvaluationOrderB( void ) {
 
+   // see disassembly
    int a = 1;
    int b = 2;
    int c = 3;
@@ -1214,6 +1239,7 @@ void EvaluationOrderB( void ) {
 
 void EvaluationOrderC( void ) {
 
+   // see disassembly
    int a = 1;
    int b = 2;
    int c = 3;
@@ -1223,18 +1249,61 @@ void EvaluationOrderC( void ) {
 
 }//ExpressionEvaluationOrderC
 
+//-----------------------------------------------------------------------------
+
+void Division( void ) {
+
+   // see disassembly
+   int a = 5;
+   int b = 2;
+
+   unsigned int ua = 5;
+   unsigned int ub = 2;
+
+   int          ir = 0;
+   unsigned int ur = 0;
+   float        fr = 0.0F;
+
+   ir = a / b;
+
+   fr = a / b;
+
+   fr = (float)( a / b );
+
+   fr = (float)a / b;
+
+   fr = a / (float)b;
+
+   ur = ua / ub;
+
+   ur = (float)ua / ub;
+
+}//Division
+
+//-----------------------------------------------------------------------------
+
 void ArithmeticModulus( void ) {
 
+   // see disassembly
    int r = 0;
 
    r = +5 % 3;
    r = -5 % 3;
    r = +5 % -3;
 
-   r = 3 % 5;
-   r = 3 % -5;
+   r = +3 % 5;
+   r = +3 % -5;
 
    r = (int)7.99F % 5;
+
+   int a = 5;
+   int b = 3;
+
+   r = +a % 3;
+   r = -a % 3;
+
+   r = +a % -3;
+   r = -a % -3;
 
 }//ArithmeticModulus
 
@@ -1244,10 +1313,11 @@ int f( void ) { return 3; }
 
 void ExpressionEvaluationOrder( void ) {
 
+	// see disassembly
 	int a = 0;
 	float c = 0;
 
-	1 + 2 * 2 ;
+	1 + 2 * 2;
 	1 + (2 * 2);
 
 	1 + 2 * 2 * 4;
@@ -1279,6 +1349,10 @@ void ExpressionEvaluationOrder( void ) {
 int main( int argc, char** argv ) {
 
 
+	Division();
+
+	TypePromotionPromoteToInt();
+
 	// precedence of post increment
 	   int i[] = {3, 5};
 	   int *p = i;
@@ -1296,29 +1370,6 @@ int main( int argc, char** argv ) {
 
 	Literals();
 
-    FloatBits fb;
-
-    fb.fv = 3.14F;
-
-    char exp = fb.bv.exponent;
-    int  man = fb.bv.mantissa;
-
-    fb.bv.exponent--;
-    fb.bv.exponent += 2;
-
-
-    fb.bv.mantissa--;
-    fb.bv.mantissa += 2;
-
-    fb.bv.sign = 1;
-    fb.bv.sign = 0;
-
-
-
-	//multiDimensionalArrays();
-	//return functionPointerSample( argc, argv );
-	//enumerationSample();
-	//bitManipulation();
     bitFields();
 
 	int a = 3;
