@@ -15,6 +15,7 @@
 #include <float.h>
 #include <math.h>
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -831,6 +832,9 @@ void multiDimensionalArrays() {
 	const int sizeJ = 3;
 	const int sizeK = 2;
 
+	size_t count = sizeof valuesE;
+
+
 	for ( int k = 0; k < sizeK; k++ ) {
 
 		for ( int j = 0; j < sizeJ; j++ ) {
@@ -1305,7 +1309,7 @@ void Modulus( void ) {
    r = +a % -3;
    r = -a % -3;
 
-}//Modulus
+}//ArithmeticModulus
 
 //-----------------------------------------------------------------------------
 
@@ -1344,7 +1348,32 @@ void ExpressionEvaluationOrder( void ) {
 
 }//ExpressionEvaluationOrder
 
+
+
 //-----------------------------------------------------------------------------
+
+typedef struct {
+	int X;
+	int Y;
+} Point;
+
+void Structs( void ) {
+
+	size_t position = 0;
+
+	struct { char C; int I; double D; } mix;
+	Point point = { 2, 3 };
+
+	mix.C = 'a';
+	mix.I = 3;
+	mix.D = 1.618;
+
+	position = offsetof(  Point, Y );
+
+}//Structs
+
+//-----------------------------------------------------------------------------
+
 
 int main( int argc, char** argv ) {
 
