@@ -76,7 +76,6 @@ float NextAfter( float q ) {
 
 }//NextAfter
 
-
 //-----------------------------------------------------------------------------
 
 void Integers( void ) {
@@ -1056,6 +1055,7 @@ void bitFields( void ) {
 	real.decimal  = 1234;
 	real.fraction = 0;
 
+
 }//bitFields
 
 //-----------------------------------------------------------------------------
@@ -1066,7 +1066,7 @@ static inline void swap( int *x, int *y ) {
     if ( x == y )
     	return;
 
-   *x ^= *y;
+    *x ^= *y;
 	*y ^= *x;
 	*x ^= *y;
 
@@ -1282,7 +1282,7 @@ void Division( void ) {
 
 //-----------------------------------------------------------------------------
 
-void ArithmeticModulus( void ) {
+void Modulus( void ) {
 
    // see disassembly
    int r = 0;
@@ -1305,7 +1305,7 @@ void ArithmeticModulus( void ) {
    r = +a % -3;
    r = -a % -3;
 
-}//ArithmeticModulus
+}//Modulus
 
 //-----------------------------------------------------------------------------
 
@@ -1317,7 +1317,7 @@ void ExpressionEvaluationOrder( void ) {
 	int a = 0;
 	float c = 0;
 
-	1 + 2 * 2;
+	1 + 2 * 2 ;
 	1 + (2 * 2);
 
 	1 + 2 * 2 * 4;
@@ -1348,6 +1348,15 @@ void ExpressionEvaluationOrder( void ) {
 
 int main( int argc, char** argv ) {
 
+	int z = 0;
+    int a = 1;
+
+	z = !a++;
+
+	z = 0;
+	a = 0;
+
+	z = !(a++);
 
 	Division();
 
@@ -1362,7 +1371,7 @@ int main( int argc, char** argv ) {
 
 
 	TypePromotion();
-	ArithmeticModulus();
+	Modulus();
 	//SameWidthTypePromotion();
 
 
@@ -1372,7 +1381,7 @@ int main( int argc, char** argv ) {
 
     bitFields();
 
-	int a = 3;
+
 	int b = 5;
 	swap( &a, &b );
 
