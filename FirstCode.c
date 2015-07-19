@@ -63,7 +63,7 @@ float ULP( float q ) {
     University of Technology, November 13, 2005.
 */
 
-float NextAfter( float q ) {
+float nextAfter( float q ) {
     // SmallestPositive is the smallest positive floating-point number.
     static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
 
@@ -75,11 +75,11 @@ float NextAfter( float q ) {
     // link with linker command line option -lm (Link Math library) otherwise fmax goes undefined
     return q + fmax(SmallestPositive, fabs(q)*Scale);
 
-}//NextAfter
+}//nextAfter
 
 //-----------------------------------------------------------------------------
 
-void Integers( void ) {
+void integers( void ) {
 
 	char c    = 0;
 	int count = 0;
@@ -98,20 +98,26 @@ void Integers( void ) {
 	value = CHAR_MAX;
 
 	size = sizeof( char );
-	size = sizeof( c );
+    //size = sizeof int;  //syntax error
+    size = sizeof value;  // ok
+
+    size = sizeof( c );
+    size = sizeof( 0 );
+	size = sizeof( 0L );
+    size = sizeof( 0LL );
 
 	size = sizeof( int );
 	size = sizeof( unsigned int );
 	count = CHAR_BIT * sizeof( unsigned int );
 
-	size = sizeof( a);
+	size = sizeof( a );
 	size = sizeof( ub );
 
-}//Integers
+}//integers
 
 //-----------------------------------------------------------------------------
 
-void Float( void ) {
+void decimals_Float( void ) {
 
    float fA = .0F;
    float fB = .0F;
@@ -120,7 +126,7 @@ void Float( void ) {
    int value = 0;
    size_t size = 0;
 
-   // char tipinin katları olarak bellekte kapladığı alan
+   // char (byte) tipinin katları olarak bellekte kapladığı alan
    size = sizeof( float );
    size = sizeof( fA );
 
@@ -151,11 +157,11 @@ void Float( void ) {
    fA = NAN;
    result = fA == fA;
 
-}//Float
+}//decimals_Float
 
 //-----------------------------------------------------------------------------
 
-void FloatQuirks( void ) {
+void floatQuirks( void ) {
 
 	float x = 1.1;
 	_Bool result = x != 1.1;
@@ -223,11 +229,11 @@ void FloatQuirks( void ) {
 
    float secondFromStart = nextafterf( FLT_EPSILON, INFINITY );
 
-}//FloatQuirks
+}//floatQuirks
 
 //-----------------------------------------------------------------------------
 
-void Pointers1( void ) {
+void pointers1( void ) {
 
    int a = 0;
    int b = 0;
@@ -259,11 +265,11 @@ void Pointers1( void ) {
    char d[] = "efgh";
    *pi = *(int*)d;
 
-}//Pointers1
+}//pointers1
 
 //-----------------------------------------------------------------------------
 
-void Pointers2( void ) {
+void pointers2( void ) {
 
    int a = 0;
    int b = 0;
@@ -333,11 +339,11 @@ void Pointers2( void ) {
    *(pi+5) = 88;
    *(pi+6) = 99;
 
-}//Pointers2
+}//pointers2
 
 //-----------------------------------------------------------------------------
 
-void Literals( void ) {
+void literals( void ) {
 
    // size as multiples of char
    size_t size = 0;
@@ -439,11 +445,11 @@ void Literals( void ) {
    // intel specific extendet 80bit (10 Byte)
    long double ld01 = LDBL_EPSILON;
 
-}//Literals
+}//literals
 
 //-----------------------------------------------------------------------------
 
-void EveryIdentifierHasAnAddress( void ) {
+void everyIdentifierHasAnAddress( void ) {
 
    int a = 2;
    int b = 3;
@@ -470,15 +476,15 @@ void EveryIdentifierHasAnAddress( void ) {
    c = arrA[ i ];
    c = i[ arrA ];
 
-   c = Literals - EveryIdentifierHasAnAddress;
+   c = literals - everyIdentifierHasAnAddress;
    c = &b - &a;
    c = (void*)&b - (void*)&a;
 
-}//EveryIdentifierHasAnAddress
+}//everyIdentifierHasAnAddress
 
 //-----------------------------------------------------------------------------
 
-void RelationalOperators(void){
+void relationalOperators(void){
 
   int a = 2;
   int b = 3;
@@ -494,7 +500,7 @@ void RelationalOperators(void){
 
   result = a != b;
 
-}//RelationalOperators
+}//relationalOperators
 
 //-----------------------------------------------------------------------------
 
@@ -813,18 +819,86 @@ CompareResult compare( char * textA, char * textB, Comparison comparison ) {
 
 //-----------------------------------------------------------------------------
 
+void arrays( void ) {
+
+   //int arrA[];  // error: array size missing
+   int arrA[] = {};
+   int arrB[ 0 ];
+   int arrC[ 5 ];
+
+   char lettersA[] = { 65, 66, 67, 68, 69 };
+   char lettersB[] = { 'A','B','C','D','E' };
+
+   char stringA[] = { 'A','B','C','D','E', 0 };
+   char stringB[] = { 'A','B','C','D','E', '\0' };
+   char stringC[] = { "ABCDE" };
+
+   wchar_t unicodeA[] = { L'Ğ', L'Ü', L'Ş', L'İ', L'Ö', L'Ç', 0 };
+   wchar_t unicodeB[] = L"ĞÜŞİÖÇ";
+
+   int arrW[ 2 ] = { 1, 2, 3 }; // copy the first 2, discard the 3rd.
+   int arrX[ 3 ] = { 1, 2, 3 };
+   int arrY[ 4 ] = { 1, 2, 3 }; // copy the first 3, leave 4th uninitialized.
+
+   size_t size = 0;
+   int count   = 0;
+
+
+   size = sizeof( arrA );
+   size = sizeof( arrB );
+
+   size  = sizeof( arrC );
+   size  = sizeof arrC;
+   count = sizeof( arrC ) / sizeof( int );
+
+   size = sizeof( lettersA );
+   size = sizeof( lettersB );
+
+   size = sizeof( stringA );
+   size = sizeof( stringB );
+   size = sizeof( stringC );
+
+   size = sizeof( wchar_t );
+   size = sizeof( unicodeA );
+
+   size  = sizeof( unicodeB );
+   count = sizeof( unicodeB ) / sizeof( wchar_t );
+
+   size = sizeof( arrW );
+   size = sizeof( arrX );
+   size = sizeof( arrY );
+
+   size = sizeof stringB;
+   size = sizeof( arrX );
+   size = sizeof( arrY );
+
+   size  = sizeof( arrC );
+   size  = sizeof arrC;
+
+   arrA[ 0 ] = 1;
+   arrB[ 0 ] = 1;
+
+   arrC[ 0 ] = 10;
+   arrC[ 1 ] = 20;
+
+}//arrays
+
+//-----------------------------------------------------------------------------
+
 void multiDimensionalArrays() {
 
-	int valuesA[   ][ 3 ] = { {1,3,5} , {2,4,6} };
-	int valuesB[ 2 ][ 3 ] = { {1,3,5} , {2,4,6} };
+    char valuesA[ 5 ][ 2 ] = { {0,1}, {2,3}, {4,5}, {6,7}, {8,9} };
+
+	int valuesB[   ][ 3 ] = { {1,3,5} , {2,4,6} };
+	int valuesC[ 2 ][ 3 ] = { {1,3,5} , {2,4,6} };
 	//int valuesC[ 2 ][  ] = { {1,3,5} , {2,4,6} };// error : array type has incomplete element type
 
 	int valuesE[ 2 ][ 3 ][ 4 ] = {
 		{
-			{111, 112, 113, 114}, {121, 122, 123, 124}, {131, 132, 133, 134}
+			{111, 112, 113, 114} ,  {121, 122, 123, 124} ,  {131, 132, 133, 134}
 		},
 		{
-			{211, 212, 213, 214}, {221, 222, 223, 224}, {231, 232, 233, 234}
+			{211, 212, 213, 214} ,  {221, 222, 223, 224} ,  {231, 232, 233, 234}
 		}
 	};
 
@@ -913,6 +987,8 @@ void xorSwap( doubleword* pValueA, doubleword* pValueB ) {
     *pValueB ^= *pValueA;
     *pValueA ^= *pValueB;
 
+    //*pValueA ^= *pValueB ^= *pValueA ^= *pValueB;
+
 }//xorSwap
 
 void xorIsNonDestructiveOperation( void ) {
@@ -995,6 +1071,10 @@ void bitManipulation() {
 
 	result = getLowNibble( 13 );
 	result = getHighNibble( 208 );
+
+	float fA = 2.99F;
+	float fB = 1.99F;
+	//result = fA & fB; // error invalid operands
 
 }//bitManipulation
 
@@ -1158,7 +1238,7 @@ typedef union {
 
 }FloatBits;
 
-void TypePromotion( void ) {
+void typePromotion( void ) {
 
 	int   i =  1;
 	float f =  0.10F;
@@ -1178,11 +1258,11 @@ void TypePromotion( void ) {
 
 	long long l = 1L + c;
 
-}//TypePromotion
+}//typePromotion
 
 //-----------------------------------------------------------------------------
 
-void TypePromotionPromoteToInt( void ) {
+void typePromotionPromoteToInt( void ) {
 
 	// see disassembly
 	// all ranks lower than int (signed or unsigned), promote to int
@@ -1194,11 +1274,11 @@ void TypePromotionPromoteToInt( void ) {
 
 	r = b + c + s;
 
-}//TypePromotionPromoteToInt
+}//typePromotionPromoteToInt
 
 //-----------------------------------------------------------------------------
 
-void TypePromotionSameWidth( void ) {
+void typePromotionSameWidth( void ) {
 
 	// see disassembly
 	// same size different rank
@@ -1209,11 +1289,11 @@ void TypePromotionSameWidth( void ) {
 
 	result = positiveOne < negativeOne;
 
-}//TypePromotionSameWidth
+}//typePromotionSameWidth
 
 //-----------------------------------------------------------------------------
 
-void EvaluationOrderA( void ) {
+void evaluationOrderA( void ) {
 
 	// see disassembly
    int a = 1;
@@ -1223,11 +1303,11 @@ void EvaluationOrderA( void ) {
 
    d = a + b - c + 3;
 
-}//EvaluationOrderA
+}//evaluationOrderA
 
 //-----------------------------------------------------------------------------
 
-void EvaluationOrderB( void ) {
+void evaluationOrderB( void ) {
 
    // see disassembly
    int a = 1;
@@ -1237,11 +1317,11 @@ void EvaluationOrderB( void ) {
 
    d = a + b * c + 3;
 
-}//EvaluationOrderB
+}//evaluationOrderB
 
 //-----------------------------------------------------------------------------
 
-void EvaluationOrderC( void ) {
+void evaluationOrderC( void ) {
 
    // see disassembly
    int a = 1;
@@ -1251,11 +1331,11 @@ void EvaluationOrderC( void ) {
 
    d = a = b = c = 5;
 
-}//ExpressionEvaluationOrderC
+}//evaluationOrderC
 
 //-----------------------------------------------------------------------------
 
-void Division( void ) {
+void division( void ) {
 
    // see disassembly
    int a = 5;
@@ -1282,11 +1362,11 @@ void Division( void ) {
 
    ur = (float)ua / ub;
 
-}//Division
+}//division
 
 //-----------------------------------------------------------------------------
 
-void Modulus( void ) {
+void modulus( void ) {
 
    // see disassembly
    int r = 0;
@@ -1309,17 +1389,63 @@ void Modulus( void ) {
    r = +a % -3;
    r = -a % -3;
 
-}//ArithmeticModulus
+}//modulus
+
+//-----------------------------------------------------------------------------
+
+void initializationOfVariables( void ) {
+
+   // see disassembly
+   char           c = 'A';
+   unsigned char uc = 'B';
+
+   short          s  = 1;
+   unsigned short us = 1;
+
+   int          i  = 3;
+   unsigned int ui = 4;
+
+   long long          ll  = 5LL;
+   unsigned long long ull = 6ULL;
+
+   float       dA = 1.99F;
+   double      dB = 2.99;
+   long double dC = 3.99;
+
+
+   i = c + 1;
+   i = s + 1;
+   i = i + 1;
+
+   i = uc + 1;
+   i = us + 1;
+   i = ui + 1;
+
+   dA = dA + i;
+   dB = dB + 1.99;
+   dC = dA + dB;
+
+}//initializationOfVariables
 
 //-----------------------------------------------------------------------------
 
 int f( void ) { return 3; }
 
-void ExpressionEvaluationOrder( void ) {
+void expressionEvaluationOrder( void ) {
 
 	// see disassembly
 	int a = 0;
-	float c = 0;
+	int b = 0;
+	int c = 1;
+
+	// ! : not a 1.99 double
+	float fA = 0.0F;
+	fA = 1,99;
+	(fA = 1) , 99;
+
+	a & b || c;
+
+	a && b || c--;
 
 	1 + 2 * 2 ;
 	1 + (2 * 2);
@@ -1339,16 +1465,47 @@ void ExpressionEvaluationOrder( void ) {
 	// series of constant expressions
 	3 , 4 , 5;
 
-	// ! : not a 1.99 double
-	c = 1,99;
-	(c=1) , 99;
-
 	!a++ + ~f();
 	( !(a++) ) + ( ~(f()) );
 
-}//ExpressionEvaluationOrder
+
+}//expressionEvaluationOrder
+
+int sequentialEvaluation( void ) {
+
+	// , comma / sequence operator
+    // binary operator.
+	// Left associative
+	// eval first operand than discard it
 
 
+	int a=1, b=2, c=3, i=0; // commas act as separators in this line, not as an operator
+
+	i = (a, b);             // stores b into i
+
+	i = a, b;               // stores a into i. Equivalent to (i = a), b;
+	                        // ... a=1, b=2, c=3, i=1
+	i = (a += 2, a + b);    // increases a by 2, then stores a+b = 3+2 into i
+
+	i = a += 2, a + b;      // increases a by 2, then stores a to i, and discards unused
+
+	i = a, b, c;            // stores a into i, discarding the unused b and c rvalues
+
+	i = (a, b, c);          // stores c into i, discarding the unused a and b rvalues
+
+
+	while ( a > 0, a-- );
+
+	for ( int j = 0, k = 10; j < k; j++, k-- );
+
+
+	return a=4, b=5, c=6;   // returns 6, not 4,
+
+	return 1, 2, 3;         // returns 3, not 1,
+
+	return (1), 2, 3;        // returns 3, not 1,
+
+}//sequentialEvaluation
 
 //-----------------------------------------------------------------------------
 
@@ -1357,7 +1514,7 @@ typedef struct {
 	int Y;
 } Point;
 
-void Structs( void ) {
+void structs( void ) {
 
 	size_t position = 0;
 
@@ -1370,43 +1527,59 @@ void Structs( void ) {
 
 	position = offsetof(  Point, Y );
 
-}//Structs
+}//structs
 
 //-----------------------------------------------------------------------------
 
 
 int main( int argc, char** argv ) {
 
-	int z = 0;
+    arrays();
+    multiDimensionalArrays();
+	initializationOfVariables();
+	sequentialEvaluation();
+	bitManipulation();
+
     int a = 1;
 
+    int x = 1;
+    int y = 1;
+	int z = 0;
+
+
+    // conditional evaluation of y
+    x && y++;
+
+    //x == 0 ? x += 1: x += 2;
+    (x == 0) ? (x += 1) : (x += 2);
+
 	z = !a++;
+
+
+	z = ( 0, 1, 2, 3 + 4 );
 
 	z = 0;
 	a = 0;
 
 	z = !(a++);
 
-	Division();
+	division();
 
-	TypePromotionPromoteToInt();
+	typePromotionPromoteToInt();
 
 	// precedence of post increment
 	   int i[] = {3, 5};
 	   int *p = i;
 	   int j = --*p++;
 
-
-
-
-	TypePromotion();
-	Modulus();
+	typePromotion();
+	modulus();
 	//SameWidthTypePromotion();
 
 
-	ExpressionEvaluationOrder();
+	expressionEvaluationOrder();
 
-	Literals();
+	literals();
 
     bitFields();
 
