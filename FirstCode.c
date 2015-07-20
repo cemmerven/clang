@@ -469,6 +469,7 @@ void everyIdentifierHasAnAddress( void ) {
 
    int i = 2;
    c = arrA[ i ];
+   c = arrA[ 2 ];
    c = i[ arrA ];
    c = 2[ arrA ];
 
