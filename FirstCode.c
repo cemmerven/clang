@@ -467,9 +467,10 @@ void everyIdentifierHasAnAddress( void ) {
    size = sizeof( arrC );
    size = sizeof( arrD );
 
-   int i = 1;
+   int i = 2;
    c = arrA[ i ];
    c = i[ arrA ];
+   c = 2[ arrA ];
 
    c = arrA[ 0 ];
    c = arrD[ 0 ];
