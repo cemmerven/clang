@@ -461,20 +461,21 @@ void everyIdentifierHasAnAddress( void ) {
    int arrA[] = { 10, 20, 30, 40, 50 };
    int arrB[] = { 10, 20, 30, 40, 50 };
    int arrC[] = { 10, 20, 30, 40, 50 };
-   int *arrD  = { 10, 20, 30, 40, 50 };
+
+   int *arrD  = { 10, 20, 30, 40, 50 };// !!
 
    size = sizeof( arrC );
    size = sizeof( arrD );
+
+   int i = 1;
+   c = arrA[ i ];
+   c = i[ arrA ];
 
    c = arrA[ 0 ];
    c = arrD[ 0 ];
 
    c = arrA[ 2 ];
-   c = arrD[ 2 ];
-
-   int i = 1;
-   c = arrA[ i ];
-   c = i[ arrA ];
+   //c = arrD[ 2 ];//!!
 
    c = literals - everyIdentifierHasAnAddress;
    c = &b - &a;
@@ -1533,6 +1534,8 @@ void structs( void ) {
 
 
 int main( int argc, char** argv ) {
+
+    everyIdentifierHasAnAddress();
 
     arrays();
     multiDimensionalArrays();
