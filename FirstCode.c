@@ -269,7 +269,7 @@ void pointers1( void ) {
 
 //-----------------------------------------------------------------------------
 
-void pointers2( void ) {
+void pointers2(void) {
 
    int a = 0;
    int b = 0;
@@ -279,9 +279,9 @@ void pointers2( void ) {
 
    int* pi = NULL;
 
-   int arr[] = {0,0,0,0,0};
+   int arr[] = { 0, 0, 0, 0, 0 };
 
-   pi  = &arr[0];
+   pi = &arr[0];
    *pi = 15;
 
    pi = pi + 1;
@@ -300,11 +300,11 @@ void pointers2( void ) {
    arr[0] = arr[1] = arr[2] = arr[3] = arr[4] = 0;
 
    pi = &arr[0];
-   *(pi+0) = 2;
-   *(pi+1) = 4;
-   *(pi+2) = 6;
-   *(pi+3) = 8;
-   *(pi+4) = 10;
+   *(pi + 0) = 2;
+   *(pi + 1) = 4;
+   *(pi + 2) = 6;
+   *(pi + 3) = 8;
+   *(pi + 4) = 10;
 
    arr[0] = arr[1] = arr[2] = arr[3] = arr[4] = 0;
 
@@ -317,29 +317,81 @@ void pointers2( void ) {
 
    arr[0] = arr[1] = arr[2] = arr[3] = arr[4] = 0;
 
-   *arr     = 111;
-   *(arr+0) = 100;
-   *(arr+1) = 200;
-   *(arr+2) = 300;
-   *(arr+3) = 400;
-   *(arr+4) = 500;
+   *arr = 111;
+   *(arr + 0) = 100;
+   *(arr + 1) = 200;
+   *(arr + 2) = 300;
+   *(arr + 3) = 400;
+   *(arr + 4) = 500;
+
+
+   pi = &arr[4];
+   pi[-4] = 10;
+   pi[-3] = 20;
+   pi[-2] = 30;
+   pi[-1] = 40;
+   pi[ 0] = 50;
+
 
    pi = &c;
 
-   *(pi-1) = 22;
-   *(pi-2) = 11;
+   // !! danger
+   *(pi - 1) = 22;
+   *(pi - 2) = 11;
 
-   *(pi+1) = 44;
-   *(pi+2) = 55;
+   *(pi + 1) = 44;
+   *(pi + 2) = 55;
 
-   *(pi+3) = 66;
-   *(pi+4) = 77;
+   *(pi + 3) = 66;
+   *(pi + 4) = 77;
+
+   a = b = c = d = e;
+
+   pi = (int*)&pi;
+
+   // !! danger
+   pi[-1] = 8;
+   pi[-2] = 7;
+   pi[-3] = 6;
+   pi[-4] = 5;
+   pi[-5] = 4;
+
+   arr[0] = arr[1] = arr[2] = arr[3] = arr[4] = 0;
+
+   0[arr] = 7;
+   1[arr] = 6;
+   2[arr] = 5;
+   3[arr] = 4;
+   4[arr] = 2;
 
    // http://www.youtube.com/watch?v=IJNR2EpS0jw
-   *(pi+5) = 88;
-   *(pi+6) = 99;
+   *(pi + 5) = 88;
+   *(pi + 6) = 99;
 
 }//pointers2
+
+//-----------------------------------------------------------------------------
+
+void pointersConstantPointers( void ) {
+
+   int a = 0;
+   int b = 0;
+
+   // both same
+   const int *pcA;
+   int const *pcB;
+
+   int *const cpi = &a;
+
+   pcA = &a;
+   pcB = &b;
+
+   // *pcA = 3; // error
+   // *pcB = 5; // error
+
+   // cpi = &b; // error
+
+}//pointersConstantPointers
 
 //-----------------------------------------------------------------------------
 
