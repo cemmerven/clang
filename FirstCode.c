@@ -85,8 +85,8 @@ void integers( void ) {
 
 	size_t size = 0;
 
-	// NOT : char tipinin bit say�s� plartforma g�re de�i�ebilir.
-	// Her platformda 8 bit (1 Byte) olmak zorunda de�il.
+	// NOT : char tipinin bit sayısı plartforma göre değişebilir.
+	// Her platformda 8 bit (1 Byte) olmak zorunda değil.
 	count = CHAR_BIT;
 
 	value = CHAR_MIN;
@@ -121,11 +121,11 @@ void decimals_Float( void ) {
    int value = 0;
    size_t size = 0;
 
-   // char (byte) tipinin katlar� olarak bellekte kaplad��� alan
+   // char (byte) tipinin katları olarak bellekte kapladığı alan
    size = sizeof( float );
    size = sizeof( fA );
 
-   // bit say�s�
+   // bit sayısı
    size =  CHAR_BIT * sizeof( float );
 
    _Bool result = true;
@@ -158,11 +158,11 @@ void decimals_Float( void ) {
 
 void decimals_Double( void ) {
 
-   // TODO : decimals_Float �rne�inden yararlanarak deneyleri double tipi i�in uygulay�n�z.
+   // TODO : decimals_Float yararlanarak deneyleri double tipi için uygulayınız
 
-   // char (byte) tipinin katlar� olarak bellekte kaplad��� alan
+   // char (byte) tipinin katları olarak bellekte kapladığı alan
 
-   // bit say�s�
+   // bit sayısı
 
 
    // precision  0.???
@@ -453,7 +453,7 @@ void literals( void ) {
    // size as multiples of char
    size_t size = 0;
 
-   // GCC -std=c99 komut sat�r� parametresi ve #include<stdbool.h> gerekli
+   // GCC -std=c99 komut satırı parametresi ve #include<stdbool.h> gerekli
    _Bool result = false;
 
 /*
@@ -492,8 +492,8 @@ void literals( void ) {
    char c14 = '\t';
    char c15 = '\v';
 
-   char c16 = '\456';
-   char c17 = '\xAF';
+   char c16 = '\456'; // octal
+   char c17 = '\xAF'; // hex
 
    unsigned short     c18 = '\u20AC';
    unsigned short int c19 = '\u20AC';
@@ -518,12 +518,12 @@ void literals( void ) {
    //char text05[] = "he said "hello"";
 
    // UNICODE char literal
-   wchar_t wc01 = L'�';
+   wchar_t wc01 = L'ç';
    size = sizeof( wc01 );
 
 
    // UNICODE string literal
-   wchar_t text06[] = L"������ ���i�� I�";
+   wchar_t text06[] = L"ĞÜŞİÖÇ ğüşiöç Iı";
    size = sizeof( text06 );
 
 
@@ -970,8 +970,8 @@ void printArguments( int argc, char** argv ) {
 
 //-----------------------------------------------------------------------------
 
-// iki "int" tipinde de�er alan ve bir "int" tipinde de�er d�nd�ren
-// her t�r fonksiyonu g�sterebilen "function pointer" tan�mla.
+// iki "int" tipinde değer alan ve bir "int" tipinde değer döndüren
+// her tür fonksiyonu gösterebilen "function pointer" tanımla.
 typedef int (*operation)( int, int );
 
 int nop( int a, int b ) {
@@ -995,22 +995,22 @@ int idv( int a, int b ) {
 }
 
 /*
- * parseArguments : kendisine "comand line"dan gelen en az 4 char* arg�man�n�n
- * ge�irilece�ini varsayar ve arg�man karakterleini operat�r ve say�sal de�erlere
- * �evirerek d�nd�r�r.
- * �NEML� NOT : bu "function" kendisine ge�irilen "operand" karakterlerinin rakam
- * olup olmad���n� kontrol etmez.
+ * parseArguments : kendisine "comand line"dan gelen en az 4 char* argümanının
+ * geçirileceğini varsayar ve argüman karakterleini operatör ve sayısal değerlere
+ * çevirerek döndürür.
+ * ÖNEMLİ NOT : bu "function" kendisine geçirilen "operand" karakterlerinin rakam
+ * olup olmadığını kontrol etmez.
  *
  * INPUT:
- * in_values[ 0 ] arg�man 1 : program�n "full path"i (kullan�lmaz g�zard� edilir).
- * in_values[ 1 ] arg�man 2 : operat�r karakteri (  +  -  *  / )
- * in_values[ 2 ] arg�man 3 : tamsay� de�er (operand A)
- * in_values[ 3 ] arg�man 4 : tamsay� de�er (operand B)
+ * in_values[ 0 ] argüman 1 : programın "full path"i (kullanılmaz gözardı edilir).
+ * in_values[ 1 ] argüman 2 : operatör karakteri (  +  -  *  / )
+ * in_values[ 2 ] argüman 3 : tamsayı değer (operand A)
+ * in_values[ 3 ] argüman 4 : tamsayı değer (operand B)
  *
  * OUTPUT:
- * out_operator : operat�r karakterinin ASCII kodu.
- * out_operandA : tamsay� de�er.
- * out_operandB : tamsay� de�er.
+ * out_operator : operatör karakterinin ASCII kodu.
+ * out_operandA : tamsayı değer.
+ * out_operandB : tamsayı değer.
  *
  * RETURN:
  * void
@@ -1027,13 +1027,13 @@ void parseArguments( char** in_values, char* out_operator, int* out_operandA, in
 		char *valueStart = NULL;
 		char *valueEnd   = NULL;
 
-		// string'in ba��na git
+		// string'in başına git
 		valueStart = valueEnd = in_values[ index + 1 ];
 
 		// string'in sonuna git
 		while ( *++valueEnd );
 
-		// son, ba�tan b�y�k oldu�u s�rece "geri" git ve basamaklar�n de�erini hesapla
+		// son, baştan büyük olduğu sürece "geri" git ve basamakların değerini hesapla
 		int place = 1;
 		while ( valueStart < valueEnd-- ) {
 
@@ -1049,7 +1049,7 @@ void parseArguments( char** in_values, char* out_operator, int* out_operandA, in
 }//parseArguments
 
 /*
- *  Eclipse, komut sat�r� parametrelerini belirle:
+ *  Eclipse, komut satırı parametrelerini belirle:
  *  Run => Debug Configurations... => tab[Arguments] => textbox[Program arguments]: + 1234 789
  */
 int functionPointerSample( int argc, char** argv ) {
@@ -1057,39 +1057,39 @@ int functionPointerSample( int argc, char** argv ) {
 	const int minArgs = 4;
 
 	if ( argc < minArgs ) {
-	   puts( "Arg�man say�s� yetersiz. En az 3 arg�man gerekli." );
+	   puts( "Argüman sayısı yetersiz. En az 3 argüman gerekli." );
 	   return EXIT_FAILURE;
 	}
 
-	// operat�r ve operandlar�n de�erlerini tutacak de�i�kenleri haz�rla
+	// operatör ve operandların değerlerini tutacak değişkenleri hazırla
 	char operator = '\0';
 	int  operandA = 0;
 	int  operandB = 0;
 
-	// komut sat�r�ndan girlen "ham" metinleri "kullan�labilir" veriye �evir
+	// komut satırından girlen "ham" metinleri "kullanılabilir" veriye çevir
 	parseArguments( argv, &operator, &operandA, &operandB );
 
-	// operat�rlere kar��l�k gelen operasyonlar� sa�layan fonksiyonlar�n
-	// adreslerini tutan "lookup table"� tan�mla
+	// operatörlere karşılık gelen operasyonları sağlayan fonksiyonların
+	// adreslerini tutan "lookup table"ı tanımla
 	const int maxEntries = 255;
 	operation operations[ maxEntries ];
 
 	int entryCount = maxEntries;
 
-	// "lookup table"� "no-operation" ile doldurarak ba�lat
+	// "lookup table"ı "no-operation" ile doldurarak başlat
 	while ( entryCount-- )
 		operations[ entryCount ] = nop;
 
-	// ba�lat�lan tabloyu haz�rla
+	// başlatılan tabloyu hazırla
 	operations[ '+' ] = add;
 	operations[ '-' ] = sub;
 	operations[ '*' ] = mul;
 	operations[ '/' ] = idv;
 
-	// verilen operat�r�n operasyonunu tablodan bul �a��r ve i�lem sonucunu al
+	// verilen operatörün operasyonunu tablodan bul çağır ve işlem sonucunu al
 	int result = operations[ operator ]( operandA, operandB );
 
-	// herhangi bir karakterle "no-operation"� dene.
+	// herhangi bir karakterle "no-operation"ı dene.
 	result = operations[ '?' ]( operandA, operandB );
 
 	return EXIT_SUCCESS;
@@ -1621,7 +1621,7 @@ static inline void swap( int *x, int *y ) {
 //-----------------------------------------------------------------------------
 
 void targetFound( void ) {
-   // ilgin� bi'�ey yap burada
+   // ilginç bi'şey yap burada
 }//targetFound
 
 void goodGotosAlwaysBranchesForward() {
@@ -1644,19 +1644,19 @@ void goodGotosAlwaysBranchesForward() {
 
 	void *buffer = malloc( sizeof(values) );
 
-	// acaip bi'�ey bulunduysa daha fazla aramaya gerek yok
+	// acaip bi'şey bulunduysa daha fazla aramaya gerek yok
 	if ( rand() == meaningOfLife )
 	    goto CLEANUP;
 
-	// acaip bi'�ey bulunduysa daha fazla aramaya gerek yok
+	// acaip bi'şey bulunduysa daha fazla aramaya gerek yok
 	if ( rand() == largePrime )
 	    goto CLEANUP;
 
-	// acaip bi'�ey bulunduysa daha fazla aramaya gerek yok
+	// acaip bi'şey bulunduysa daha fazla aramaya gerek yok
 	if ( rand() == NULL )
 	    goto CLEANUP;
 
-	// bulunamad�ysa aramaya devam
+	// bulunamadıysa aramaya devam
 	int target = 222;
 	for ( int k = 0; k < sizeK; k++ ) {
 
@@ -1673,7 +1673,7 @@ void goodGotosAlwaysBranchesForward() {
 
 	}//fork
 
-	// bi'�ey bulunamad� "targetFound"un �zerinden atla
+	// bi'şey bulunamadı "targetFound"un üzerinden atla
     goto CLEANUP;
 
 MULTIBREAK:
