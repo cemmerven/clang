@@ -1611,6 +1611,7 @@ typedef struct {
      unsigned command       : 5;
 } DiskRegister;
 
+ 
 void bitFields( void ) {
 
 	int size = 0;
