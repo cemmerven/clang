@@ -2071,10 +2071,10 @@ int main( int argc, char** argv ) {
 	sequentialEvaluation();
 	bitManipulation();
 
-    int a = 1;
+   int a = 1;
 
-    int x = 1;
-    int y = 1;
+   int x = 1;
+   int y = 1;
 	int z = 0;
 
 
