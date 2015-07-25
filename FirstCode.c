@@ -1382,12 +1382,13 @@ void arrays( void ) {
    char stringB[] = { 'A','B','C','D','E', '\0' };
    char stringC[] = { "ABCDE" };
 
-   wchar_t unicodeA[] = { L'�', L'�', L'�', L'�', L'�', L'�', 0 };
-   wchar_t unicodeB[] = L"������";
+   wchar_t unicodeA[] = { L'Ğ', L'Ü', L'Ş', L'İ', L'Ö', L'Ç', 0 };
+   wchar_t unicodeB[] = L"ĞÜŞİÖÇ";
 
-   int arrW[ 2 ] = { 1, 2, 3 }; // copy the first 2, discard the 3rd.
-   int arrX[ 3 ] = { 1, 2, 3 };
-   int arrY[ 4 ] = { 1, 2, 3 }; // copy the first 3, leave 4th uninitialized.
+   int arrW[ 2 ] = { 1, 2, 3 }; // initialize the first 2, discard the 3rd.
+   int arrX[ 3 ] = { 1, 2, 3 }; // initialize all.
+   int arrY[ 4 ] = { 1, 2, 3 }; // initialize the first 3, leave 4th uninitialized.
+   int arrZ[ 5 ] = { [2] = 30 };// initialize the 3rd. leave the rest uninitialized
 
    size_t size = 0;
    int count   = 0;
@@ -2058,23 +2059,101 @@ int sequentialEvaluation( void ) {
 
 //-----------------------------------------------------------------------------
 
+// type definition, no storage allocation
 typedef struct {
 	int X;
 	int Y;
 } Point;
 
+// global (link scope) identifier, with storage
+struct {
+	float fX;
+	float fY;
+} PointF;
+
+// global (link scope) identifiers, with storage
+struct {
+	int X;
+	int Y;
+} g_pointA, g_pointB, g_pointC;
+
+
+// structure definition with TAG (PointD), no storage allocation
+struct PointD {
+	double dX;
+	double dY;
+};
+
+// declaration (can be many), no storage allocation :
+// "there is an identifier definition called PointF in the global (link scope)
+struct PointF;
+struct PointF;
+struct PointF;
+
+/*
+struct PointX {
+	long double ldX;
+	long double ldY;
+	PointX* pNextPoint; // error : PointX' could not be resolved, unknown type name 'PointX'
+};
+*/
+
+// structure definition with TAG (PointX)
+struct PointX {
+	long double ldX;
+	long double ldY;
+	struct PointX* pNext;
+};
+
+typedef struct TBar {
+	int A;
+	int B;
+	struct Foo* pFoo;
+} Bar;
+
+typedef struct TFoo {
+	int A;
+	int B;
+	TBar* pBar; // error :  TBar is not a type definition therefore TBar is unknown type use: "struct TBar* pBar"  or  "Bar* pBar"
+} Foo;
+
+// TODO : struct flexible array member
+
 void structs( void ) {
 
+	struct { char C; int I; double D; } mixA;
+	mixA.C = 'a';
+	mixA.I = 3;
+	mixA.D = 1.618;
+
+	struct { char C; int I; double D; } mixB = { 'a', 3, 1.618 };
+
+	Point pointA = { 2, 3 };
+	Point pointB = { .X = 2, .Y = 3 };
+	Point pointC = { .Y = 4 };
+
+	// point = { 4,5 } // error;
+	pointA = (Point){ 4, 5 };
+	pointA = (Point){ .Y = 6 };
+
+	// PointF
+    PointF.fY = .1F;
+    PointF.fY = .2F;
+
+    //global points
+    g_pointA.X = 1;
+    g_pointB.X = 2;
+
+    struct PointD pointD1;
+    struct PointD pointD2 = { .1, .2 };
+
+    //pointD1 = { .1, .2 };         // error
+    //pointD1 = (PointD){ .1, .2 }; // error
+    pointD1 = (struct PointD){ .1, .2 };
+
 	size_t position = 0;
-
-	struct { char C; int I; double D; } mix;
-	Point point = { 2, 3 };
-
-	mix.C = 'a';
-	mix.I = 3;
-	mix.D = 1.618;
-
 	position = offsetof(  Point, Y );
+
 
 }//structs
 
@@ -2103,10 +2182,10 @@ int main( int argc, char** argv ) {
 	sequentialEvaluation();
 	bitManipulation();
 
-    int a = 1;
+   int a = 1;
 
-    int x = 1;
-    int y = 1;
+   int x = 1;
+   int y = 1;
 	int z = 0;
 
 
@@ -2127,7 +2206,7 @@ int main( int argc, char** argv ) {
 	z = !(a++);
 
 	division();
-
+  
 	typePromotionPromoteToInt();
 
 	// precedence of post increment
