@@ -181,11 +181,11 @@ float nextAfter( float q ) {
 unsigned long long floatSteps( void ) {
 
 	unsigned long long steps = 0;
-	long double next         = FLT_MIN;
+	long double next         = .0F;
     float number             = .0F;
     unsigned int diff        = 0;
 
-	for ( next = FLT_MIN, steps = 1; next < FLT_MAX; steps++ ) {
+	for ( next = -FLT_MIN, steps = 1; next < FLT_MAX; steps++ ) {
 
 		number = nextafterf( number, FLT_MAX );
         if ( number == HUGE_VALF ) {
@@ -197,7 +197,18 @@ unsigned long long floatSteps( void ) {
 	}//for
 
 	// 2^32 - (representable negative + positive float count)
-	diff = UINT_MAX - steps * 2;
+	diff = UINT_MAX - steps;
+
+	// another way
+	float f = - FLT_MAX;
+	long long count = 1;
+
+	do {
+
+       f = nextafterf( f, FLT_MAX );
+	   count++;
+
+	} while ( f != FLT_MAX );
 
 	return steps;
 
@@ -487,12 +498,12 @@ void literals( void ) {
    // GCC -std=c99 komut satırı parametresi ve #include<stdbool.h> gerekli
    _Bool result = false;
 
-/*
-    Decimal: 97
-   	Hex    : 0x61
-   	Binary : 0b01100001
-   	Octal  : 0141
-*/
+   /*
+   Decimal: 97
+   Hex    : 0x61
+   Binary : 0b01100001
+   Octal  : 0141
+   */
    char c = 0;
 
    c = 97;   // decimal (base 10) literal
@@ -552,11 +563,9 @@ void literals( void ) {
    wchar_t wc01 = L'ç';
    size = sizeof( wc01 );
 
-
    // UNICODE string literal
    wchar_t text06[] = L"ĞÜŞİÖÇ ğüşiöç Iı";
    size = sizeof( text06 );
-
 
    // IEEE 754 single precision floating point number (4 Byte)
    float f01 = 0;
@@ -572,16 +581,31 @@ void literals( void ) {
    float electronCharge = 1.60217657e-19;
    float protonMass     = 1.67262178e-27;
 
-
    // IEEE 754 double precision floating point number (8 Byte)
    double d01 = .0;
    double d02 = .456;
    double d03 = DBL_EPSILON;
 
-   // intel specific extendet 80bit (10 Byte)
+   // intel specific extended 80bit (10 Byte)
    long double ldGR = 1.618L;
    long double ldPI = 3.14159265358979323846264338328L;
    long double ld01 = LDBL_EPSILON;
+
+   /* HEXADECIMAL FLOATS
+    0x   .  13 x 4 = 52 decimal digits  (Power of 2 decimal digits)
+            13 hexadecimal digits       (P - decimal)
+   (0x1) . (999999999999A)              P(-4)
+   */
+   // C99 specific IEEE 754 double precision floating point HEXADECIMAL (base 16) literal
+   // 1.100110011001100110011001100110011001100110011001101 x 2^(-4).
+   double d04 = 0x1.999999999999Ap-4;
+
+   double d05 = 0xF.999999999999aP-4;
+   double d06 = 0xF.FFFFFFFFFFFFFP-4;
+   double d07 = 0x1p-1;
+   double d08 = 0x2p-1;
+   double d09 = 0x3p-1;
+
 
 }//literals
 
@@ -1611,7 +1635,6 @@ typedef struct {
      unsigned command       : 5;
 } DiskRegister;
 
- 
 void bitFields( void ) {
 
 	int size = 0;
@@ -2027,6 +2050,8 @@ void structs( void ) {
 
 
 int main( int argc, char** argv ) {
+
+	literals();
 
 	floatSteps();
 
