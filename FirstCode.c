@@ -298,11 +298,15 @@ void pointers1( void ) {
 
    int a = 0;
    int b = 0;
+
+
    unsigned int addressX = 0;
    unsigned int addressY = 0;
 
-   char c[] = "vwxyz";
+   char ar[] = "vwxyz";
    int  *pi;
+   int* piA = NULL;
+   int* piB = NULL;
 
    pi = 0;
    pi = '\0';
@@ -320,8 +324,20 @@ void pointers1( void ) {
    pi++;
    *pi = 7;
 
-   pi  = c;
+   pi  = ar;
    *pi = 1684234849;
+
+   a   = 3;
+   piA = &a;
+   piB = &a;
+
+   int c = 0;
+   c = *piA;
+   c = *piB;
+
+   c = 4;
+   *piB = c;
+   c = a + *piA + *piB;
 
    char d[] = "efgh";
    *pi = *(int*)d;
@@ -338,7 +354,7 @@ void pointers2( void ) {
    int d = 0;
    int e = 0;
 
-   int* pi = NULL;
+   int* pi  = NULL;
 
    int arr[] = { 0, 0, 0, 0, 0 };
 
@@ -435,6 +451,22 @@ void pointers2( void ) {
 
 void pointers3( void ) {
 
+	int    a =  3;
+	int   *b = &a;
+	int  **c = &b;
+	int ***d = &c;
+
+	   a = 2;
+	  *b = 3;
+     **c = 4;
+	***d = 5;
+
+}//pointers3
+
+//-----------------------------------------------------------------------------
+
+void pointers4( void ) {
+
    int arrI[ 5 ] = { 10, 20, 30, 40, 50 };
 
    int *piA = NULL;
@@ -461,7 +493,7 @@ void pointers3( void ) {
    size = sizeof( long double );
    distance = pldA - pldB;
 
-}//pointers3
+}//pointers4
 
 //-----------------------------------------------------------------------------
 
@@ -1178,7 +1210,7 @@ void functionPointers( void ) {
 
    result = fp( 5, 3 );
 
-   // cast than call
+   // cast than call :  int(*)(int,int)
    result = ( (int(*)(int,int))pv )( 5, 3 );
 
    pv = sub;
@@ -2063,18 +2095,18 @@ int main( int argc, char** argv ) {
 
 	functionPointers();
 
-   everyIdentifierHasAnAddress();
+    everyIdentifierHasAnAddress();
 
-   arrays();
-   multiDimensionalArrays();
+    arrays();
+    multiDimensionalArrays();
 	initializationOfVariables();
 	sequentialEvaluation();
 	bitManipulation();
-   
-   int a = 1;
 
-   int x = 1;
-   int y = 1;
+    int a = 1;
+
+    int x = 1;
+    int y = 1;
 	int z = 0;
 
 
