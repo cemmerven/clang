@@ -2063,14 +2063,14 @@ int main( int argc, char** argv ) {
 
 	functionPointers();
 
-    everyIdentifierHasAnAddress();
+   everyIdentifierHasAnAddress();
 
-    arrays();
-    multiDimensionalArrays();
+   arrays();
+   multiDimensionalArrays();
 	initializationOfVariables();
 	sequentialEvaluation();
 	bitManipulation();
-
+   
    int a = 1;
 
    int x = 1;
