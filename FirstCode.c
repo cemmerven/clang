@@ -1385,10 +1385,11 @@ void arrays( void ) {
    wchar_t unicodeA[] = { L'Ğ', L'Ü', L'Ş', L'İ', L'Ö', L'Ç', 0 };
    wchar_t unicodeB[] = L"ĞÜŞİÖÇ";
 
-   int arrW[ 2 ] = { 1, 2, 3 }; // initialize the first 2, discard the 3rd.
-   int arrX[ 3 ] = { 1, 2, 3 }; // initialize all.
-   int arrY[ 4 ] = { 1, 2, 3 }; // initialize the first 3, leave 4th uninitialized.
-   int arrZ[ 5 ] = { [2] = 30 };// initialize the 3rd. leave the rest uninitialized
+   int arrQ[ 2 ] = { 1, 2, 3 }; // initialize the first 2, discard the 3rd.
+   int arrW[ 3 ] = { 1, 2, 3 }; // initialize all.
+   int arrX[ 4 ] = { 1, 2, 3 }; // initialize the first 3, leave 4th uninitialized.
+   int arrY[ 5 ] = { [2] = 30 };// initialize the 3rd. initialize the rest with zero.
+   int arrZ[ 5 ] = {};          // initialize all with zero.
 
    size_t size = 0;
    int count   = 0;
@@ -2075,7 +2076,7 @@ struct {
 struct {
 	int X;
 	int Y;
-} g_pointA, g_pointB, g_pointC;
+} g_pointA, g_pointB, g_pointC, *g_pointer;
 
 
 // structure definition with TAG (PointD), no storage allocation
@@ -2114,7 +2115,7 @@ typedef struct TBar {
 typedef struct TFoo {
 	int A;
 	int B;
-	TBar* pBar; // error :  TBar is not a type definition therefore TBar is unknown type use: "struct TBar* pBar"  or  "Bar* pBar"
+	//TBar* pBar; // error :  TBar is not a type definition therefore TBar is unknown type, use: "struct TBar* pBar"  or  "Bar* pBar"
 } Foo;
 
 // TODO : struct flexible array member
@@ -2130,19 +2131,43 @@ void structs( void ) {
 
 	Point pointA = { 2, 3 };
 	Point pointB = { .X = 2, .Y = 3 };
-	Point pointC = { .Y = 4 };
+	Point pointC = { .Y = 4 }; // initializes .X with zero
 
-	// point = { 4,5 } // error;
-	pointA = (Point){ 4, 5 };
-	pointA = (Point){ .Y = 6 };
+	// point = { 4,5 }         // error;
+	pointA = (Point){ 4, 5 };  // ok
+
+	// !!
+	pointA = (Point){ .Y = 6 }; // !! overrides .X with zero
+
+	//
+	pointA = pointB;
 
 	// PointF
     PointF.fY = .1F;
     PointF.fY = .2F;
 
+
     //global points
     g_pointA.X = 1;
-    g_pointB.X = 2;
+    g_pointA.Y = 2;
+
+    g_pointB.X = 10;
+    g_pointB.Y = 20;
+
+    g_pointC.X = 100;
+    g_pointC.Y = 200;
+
+    // assigment (copy)
+    g_pointA = g_pointB;
+
+    // struct member referencing
+    g_pointer = &g_pointC;
+    (*g_pointer).X = 22;
+    (*g_pointer).Y = 33;
+
+    // member dereferencing operator
+    g_pointer->X = 44;
+    g_pointer->Y = 55;
 
     struct PointD pointD1;
     struct PointD pointD2 = { .1, .2 };
@@ -2154,13 +2179,16 @@ void structs( void ) {
 	size_t position = 0;
 	position = offsetof(  Point, Y );
 
-
 }//structs
 
 //-----------------------------------------------------------------------------
 
 
 int main( int argc, char** argv ) {
+
+	arrays();
+
+	structs();
 
 	literals();
 
@@ -2182,10 +2210,10 @@ int main( int argc, char** argv ) {
 	sequentialEvaluation();
 	bitManipulation();
 
-   int a = 1;
+    int a = 1;
 
-   int x = 1;
-   int y = 1;
+    int x = 1;
+    int y = 1;
 	int z = 0;
 
 
@@ -2206,7 +2234,7 @@ int main( int argc, char** argv ) {
 	z = !(a++);
 
 	division();
-  
+
 	typePromotionPromoteToInt();
 
 	// precedence of post increment
