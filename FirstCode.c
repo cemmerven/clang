@@ -1487,6 +1487,61 @@ char* getLatinName( Days day ) {
 
 }//getLatinName
 
+// enumeration type definition with TAG
+typedef enum TAllColor {
+	red = 3,
+	green,
+	blue,
+	cyan,
+	magenta,
+	yellow,
+	black,
+	white
+} AllColor;
+
+void enums( void ) {
+
+	enum { red, green, blue } colorA,
+                              colorB,
+	                          colorC,
+	                          colorD;
+
+	// enum { red, green, blue } colorE; // error: redeclaration of enumerator
+
+	enum PrintColor { cyan, magenta, yellow, black };
+
+	enum PrintColor colorW;
+	enum PrintColor colorX;
+	enum PrintColor colorY = black;
+	enum PrintColor colorZ = magenta;
+
+    enum TAllColor allA;
+    enum TAllColor allB = black;
+	AllColor       allC;
+	AllColor       allD = white;
+
+	size_t size = 0;
+	size = sizeof( colorA );
+
+	colorA = 0;
+	colorA = 1;
+	colorA = 2;
+
+	colorA = red;
+	colorA = green;
+	colorA = blue;
+
+	colorA = colorA - 1;
+	colorA = colorA - 1;
+	colorA = colorA - 1;
+
+	colorA = INT_MIN;
+	colorA = INT_MAX;
+
+    colorA = colorZ;
+
+}//enums
+
 char* getSemiNordicName( Days day ) {
 
 	static char error[] = "ukjent dag kode";
@@ -1529,8 +1584,8 @@ void enumerationSample( void ) {
 
 typedef enum {
    lesser  = -1,
-   equal   = 0,
-   greater = 1,
+   equal   =  0,
+   greater = +1,
 } CompareResult;
 
 typedef enum {
@@ -1822,8 +1877,6 @@ typedef struct {
    unsigned int decimal  : 21;
    unsigned int fraction : 10;
 } Minireal;
-
-typedef enum { black = 30, red, green, yellow, blue, magenta, cyan, white } Color;
 
 // refer : http://en.wikipedia.org/wiki/ANSI_escape_code
 // Fancy char for color-terminals
@@ -2238,17 +2291,17 @@ int sequentialEvaluation( void ) {
 
 //-----------------------------------------------------------------------------
 
-// type definition, no storage allocation
-typedef struct {
-	int X;
-	int Y;
-} Point;
-
 // global (link scope) identifier, with storage
 struct {
 	float fX;
 	float fY;
 } PointF;
+
+// declaration (can be many), no storage allocation :
+// "there is an identifier definition called PointF in the global (link scope) scope
+struct PointF;
+struct PointF;
+struct PointF;
 
 // global (link scope) identifiers, with storage
 struct {
@@ -2257,23 +2310,23 @@ struct {
 } g_pointA, g_pointB, g_pointC, *g_pointer;
 
 
-// structure definition with TAG (PointD), no storage allocation
+// structure definition with TAG (PointD) to refer structure, no storage allocation
 struct PointD {
 	double dX;
 	double dY;
 };
 
-// declaration (can be many), no storage allocation :
-// "there is an identifier definition called PointF in the global (link scope)
-struct PointF;
-struct PointF;
-struct PointF;
+// structure type definition without TAG, no storage allocation
+typedef struct {
+	int X;
+	int Y;
+} Point;
 
 /*
 struct PointX {
 	long double ldX;
 	long double ldY;
-	PointX* pNextPoint; // error : PointX' could not be resolved, unknown type name 'PointX'
+	PointX* pNext; // error : PointX' could not be resolved, unknown type name 'PointX'
 };
 */
 
@@ -2296,7 +2349,14 @@ typedef struct TFoo {
 	//TBar* pBar; // error :  TBar is not a type definition therefore TBar is unknown type, use: "struct TBar* pBar"  or  "Bar* pBar"
 } Foo;
 
-// TODO : struct flexible array member
+
+struct PointX structs_asParameterAndReturnValue( struct PointX point ) {
+
+	return *(point.pNext);
+
+}//structs_asParameterAndReturnValue
+
+// TODO : struct flexible array member C99
 
 void structs( void ) {
 
@@ -2306,6 +2366,10 @@ void structs( void ) {
 	mixA.D = 1.618;
 
 	struct { char C; int I; double D; } mixB = { 'a', 3, 1.618 };
+
+
+	PointF.fX = .01F;
+	PointF.fX = .02F;
 
 	Point pointA = { 2, 3 };
 	Point pointB = { .X = 2, .Y = 3 };
