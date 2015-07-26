@@ -1076,39 +1076,51 @@ void controlFlow_if() {
 
 void controlFlow_Switch() {
 
+   int  value = 3;
+   char rating = 'X';
 
-	 int  value = 3;
-     char rating = 'X';
+   // fall-through switch
+   switch( value ) {
 
-	   switch( value ) {
-
-	       case 0 :
-		   case 1 :
-		   case 2 :
-			   rating = 'D';
-			   break;
-
-		   case 3 :
-		   case 4 :
-		   case 5 :
-			   rating = 'C';
+	   case 0 :
+	   case 1 :
+	   case 2 :
+		   rating = 'D';
 		   break;
 
-		   case 6 :
-		   case 7 :
-		   case 8 :
-			   rating = 'B';
-			   break;
+	   case 3 :
+	   case 4 :
+	   case 5 :
+		   rating = 'C';
+	   break;
 
-		   case 9 :
-		   case 10 :
-			   rating = 'A';
-			   break;
+	   case 6 :
+	   case 7 :
+	   case 8 :
+		   rating = 'B';
+		   break;
 
-		   default :
-			   rating = 'X';
+	   case 9 :
+	   case 10 :
+		   rating = 'A';
+		   break;
 
-	   }//switch
+	   default :
+		   rating = 'X';
+
+   }//switch
+
+	enum { colder, cold, warm, hot, hotter } climate = cold;
+	wchar_t* text = "bilinmiyor";
+
+	// switch without default
+	switch ( climate ) {
+		case colder : text = L"çok soğuk"; break;
+		case cold   : text = L"soğuk";     break;
+		case warm   : text = L"ılık";      break;
+		case hot    : text = L"sıcak";     break;
+		case hotter : text = L"çok sıcak"; break;
+	};
 
 }//controlFlow_Switch
 
@@ -1123,6 +1135,9 @@ float sinus( int angle ) {
 	angle = angle > 45 ? 90 - angle : angle;
 
 	switch( angle ) {
+
+    	default : return NAN;
+
 	    case 0  : return .0000;
 		case 1  : return .0175;
 		case 2  : return .0349;
@@ -1170,11 +1185,7 @@ float sinus( int angle ) {
 		case 44 : return .6947;
 		case 45 : return .7071;
 
-		default : NAN;
-
 	};//switch
-
-
 
 }//sinus
 
@@ -2352,7 +2363,7 @@ void structs( void ) {
 
 int main( int argc, char** argv ) {
 
-	sinus( 49 );
+	sinus( 120 );
 
 	arrays();
 
