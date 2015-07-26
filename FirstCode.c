@@ -2378,8 +2378,8 @@ void structs( void ) {
 	Point pointB = { .X = 2, .Y = 3 };
 	Point pointC = { .Y = 4 }; // initializes .X with zero
 
-	// point = { 4,5 }         // error;
-	pointA = (Point){ 4, 5 };  // ok
+	// pointA = { 4,5 }         // error
+	pointA = (Point){ 4, 5 };  // ok : "compound literal" assignment
 
 	// !!
 	pointA = (Point){ .Y = 6 }; // !! overrides .X with zero
@@ -2416,9 +2416,9 @@ void structs( void ) {
     struct PointD pointD1;
     struct PointD pointD2 = { .1, .2 };
 
-    //pointD1 = { .1, .2 };         // error
-    //pointD1 = (PointD){ .1, .2 }; // error
-    pointD1 = (struct PointD){ .1, .2 };
+    //pointD1 = { .1, .2 };              // error
+    //pointD1 = (PointD){ .1, .2 };      // error
+    pointD1 = (struct PointD){ .1, .2 }; // ok : "compound literal" assignment
 
 	size_t position = 0;
 	position = offsetof(  Point, Y );
