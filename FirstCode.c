@@ -2365,8 +2365,11 @@ void structs( void ) {
 	mixA.I = 3;
 	mixA.D = 1.618;
 
+	// mixB's type is different than mixA's type although they are looking the same
 	struct { char C; int I; double D; } mixB = { 'a', 3, 1.618 };
 
+
+	// mixA = mixB; // error : incompatible types struct<anonymous>
 
 	PointF.fX = .01F;
 	PointF.fX = .02F;
