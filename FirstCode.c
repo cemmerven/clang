@@ -21,6 +21,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 //-----------------------------------------------------------------------------
 
@@ -269,6 +270,11 @@ void floatQuirks( void ) {
 
    int loop = 10;
    f = 0.0F;
+
+   double value = .02;
+   double diff = value - value;
+   result = diff == NAN;
+
 
    while ( loop-- ) {
       f += 0.1F;
@@ -1382,13 +1388,13 @@ void functionPointers( void ) {
 
    pv = add;
 
-   // fun address assignment with and without casting
+   // function address assignment with and without casting
    fp = (int(*)(int,int)) pv;
    fp = pv;
 
    result = fp( 5, 3 );
 
-   // cast than call :  int(*)(int,int)
+   // cast to function poimter than call :  int(*)(int,int)
    result = ( (int(*)(int,int))pv )( 5, 3 );
 
    pv = sub;
@@ -2008,6 +2014,51 @@ CLEANUP:
 
 //-----------------------------------------------------------------------------
 
+int recursionLimit = 16;
+void functions_recursiveFunction( void ) {
+
+	if ( recursionLimit-- ) {
+		functions_recursiveFunction();
+	}
+
+}//functions_recursiveFunction
+
+long long int functions_recursiveFactorial( long long int number ) {
+
+	/*
+	if ( number == 0 ) {
+	   return 1;
+	} else {
+	   return number * functions_recursiveFactorial( number - 1 );
+	}
+    */
+
+	return number == 0 ? 1 : number * functions_recursiveFactorial( number - 1 );
+
+}//functions_recursionFactorial
+
+long long int functions_sum( int argc, ... ) {
+
+	long long int sum = 0;
+	va_list valist;
+
+	// initialize macro
+	va_start( valist, argc );
+
+	for ( int i = 0; i < argc; i++)
+	{
+	   sum += va_arg(valist, int);
+	}
+
+	// clean valist left overs
+	va_end( valist );
+
+	return sum;
+
+}//functions_sum
+
+//-----------------------------------------------------------------------------
+
 typedef union {
 
 	struct {
@@ -2429,6 +2480,15 @@ void structs( void ) {
 
 
 int main( int argc, char** argv ) {
+
+	long long int sum = 0;
+	sum = functions_sum( 3 , 2, 4, 6 );
+	sum = functions_sum( 4 , 1, 3, 5, 7 );
+
+
+	long long int factorial = functions_recursiveFactorial( 5 );
+
+	functions_recursiveFunction();
 
 	sinus( 120 );
 
