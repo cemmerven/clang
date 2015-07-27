@@ -2543,6 +2543,7 @@ int main( int argc, char** argv ) {
 
 	typePromotionPromoteToInt();
 
+ 
 	// precedence of post increment
 	   int i[] = {3, 5};
 	   int *p = i;
