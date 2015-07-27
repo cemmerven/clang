@@ -2510,8 +2510,8 @@ int main( int argc, char** argv ) {
 
     everyIdentifierHasAnAddress();
 
-    arrays();
-    multiDimensionalArrays();
+   arrays();
+   multiDimensionalArrays();
 	initializationOfVariables();
 	sequentialEvaluation();
 	bitManipulation();
@@ -2542,7 +2542,6 @@ int main( int argc, char** argv ) {
 	division();
 
 	typePromotionPromoteToInt();
-
  
 	// precedence of post increment
 	   int i[] = {3, 5};
@@ -2558,8 +2557,7 @@ int main( int argc, char** argv ) {
 
 	literals();
 
-    bitFields();
-
+   bitFields();
 
 	int b = 5;
 	swap( &a, &b );
