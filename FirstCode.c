@@ -726,7 +726,7 @@ void operators_relational( void ) {
   int b = 3;
   int c = 0;
 
-  _Bool result = 0;
+  _Bool result = false;
 
   result = a > b;
 
@@ -747,7 +747,7 @@ void operators_logical( void ) {
   int b = 3;
   int c = 0;
 
-  _Bool result = 0;
+  _Bool result = false;
 
   // equality
   result = a == a;
