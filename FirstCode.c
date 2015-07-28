@@ -2781,7 +2781,7 @@ void structs_flexibleArrayMember( measurementCount ) {
    struct TMeasurements* pMsr;
 
    size_t bytesAllocated = sizeof(struct TMeasurements) + measurementCount * sizeof(long double);
-   pMsr = malloc( bytesAllocated );
+   pMsr = (struct TMeasurements*) malloc( bytesAllocated );
    pMsr->length = measurementCount;
 
    const int upperLimit = 10;
