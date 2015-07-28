@@ -1675,7 +1675,10 @@ void arrays( void ) {
 
 //-----------------------------------------------------------------------------
 
-void multiDimensionalArrays() {
+// defines special type for ( 3 x 4 ) of integers.
+typedef int Special3D[ 3 ][ 4 ];
+
+void arrays_multiDimensional() {
 
     char valuesA[ 5 ][ 2 ] = { {0,1}, {2,3}, {4,5}, {6,7}, {8,9} };
 
@@ -1692,25 +1695,24 @@ void multiDimensionalArrays() {
 		}
 	};
 
-	const int sizeI = 4;
-	const int sizeJ = 3;
-	const int sizeK = 2;
+	const int lengthI = 4;
+	const int lengthJ = 3;
+	const int lengthK = 2;
 
-	size_t count = sizeof valuesE;
+	size_t size = sizeof valuesE;
 
+	for ( int k = 0; k < lengthK; k++ ) {
 
-	for ( int k = 0; k < sizeK; k++ ) {
+		for ( int j = 0; j < lengthJ; j++ ) {
 
-		for ( int j = 0; j < sizeJ; j++ ) {
-
-			for ( int i = 0; i < sizeI; i++ ) {
+			for ( int i = 0; i < lengthI; i++ ) {
 
 				int hundreds = k + 1;
 				int tens     = j + 1;
 				int ones     = i;
 
 				valuesE[ k ][ j ][ i ] = 100*hundreds + 10*tens + ones;
-				printf( "%d%d%d ",  hundreds, tens, ones );
+				printf( "%d%d%d ", hundreds, tens, ones );
 
 			}//fori
 
@@ -1718,7 +1720,76 @@ void multiDimensionalArrays() {
 
 	}//fork
 
-}//multiDimensionalArrays
+	Special3D* p3D = NULL;
+	size_t allocateBytes = sizeof(Special3D) * lengthK;
+
+	void* buffer = malloc( allocateBytes );
+	if ( buffer == NULL ) {
+		// not enough memory, terminate the program with failure
+	    exit( EXIT_FAILURE );
+	}
+
+	// Casting void* to int(*)[3][4]. Same effect as casting to Special3D*
+	p3D = (int(*)[3][4]) buffer;
+
+	for ( int k = 0; k < lengthK; k++ ) {
+
+		for ( int j = 0; j < lengthJ; j++ ) {
+
+			for ( int i = 0; i < lengthI; i++ ) {
+
+				int hundreds = k + 1;
+				int tens     = j + 1;
+				int ones     = i;
+
+				p3D[ k ][ j ][ i ] = 100*hundreds + 10*tens + ones;
+
+			}//fori
+
+		}//forj
+
+	}//fork
+
+    // free the previously allocated memory
+	free( p3D );
+
+}//arrays_multiDimensional
+
+//-----------------------------------------------------------------------------
+
+void arrays_multiDimensionalJagged() {
+
+	// jagged array sample
+	// refer https://en.wikipedia.org/wiki/Jagged_array
+
+	int** values = NULL;
+
+    // TODO : implement check for return value of malloc for an allocation error
+    values = (int**) malloc( 2 * sizeof(int*) );
+    values[ 0 ] = NULL;
+    values[ 1 ] = NULL;
+
+    int arrayCount = 3;
+    const int leastElementCount = 2;
+	for ( int i = 0; i < arrayCount; i++ ) {
+
+		int  length = i + leastElementCount;
+		int* buffer = malloc( length * sizeof(int) );
+
+		values[ i ] = buffer;
+
+		// fill the buffer
+		for ( int j = 0; j < length; j++ ) {
+
+			values[ i ][ j ] = i*10 + j;
+
+		}//forj
+
+	}//fori
+
+	// TODO : we need lots of "free"s here...
+
+}//arrays_multiDimensionalJagged
 
 //-----------------------------------------------------------------------------
 
@@ -1879,9 +1950,9 @@ void bitManipulation() {
 
 // Homemade fixed-point number
 typedef struct {
-   unsigned int sign     : 1;
-   unsigned int decimal  : 21;
    unsigned int fraction : 10;
+   unsigned int decimal  : 21;
+   unsigned int sign     : 1;
 } Minireal;
 
 // refer : http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -1920,11 +1991,11 @@ void bitFields( void ) {
     character.blink     = false;
 
 	// +2345.678
-	Minireal real = { 0, 2345, 678 };
+	Minireal real = { 0, 2345, 1 };
 
 	// -1234.567
 	real.sign     = 1;
-	real.decimal  = 1234;
+	real.decimal  = 2345;
 	real.fraction = 0;
 
 
@@ -2062,14 +2133,30 @@ long long int functions_sum( int argc, ... ) {
 typedef union {
 
 	struct {
-		int mantissa : 23;
+		int mantissa : 23; // LSb little endian
 		int exponent : 8;
-		int sign     : 1;
+		int sign     : 1;  // MSb little endian
 	} bv;
 
 	float fv;
 
-}FloatBits;
+} FloatBits;
+
+
+void unions( void ) {
+
+   FloatBits bits;
+   size_t size = 0;
+
+   size = sizeof( bits );
+
+   bits.fv      = -3.14F;
+   bits.bv.sign = 0;
+
+
+}//unions
+
+//-----------------------------------------------------------------------------
 
 void typePromotion( void ) {
 
@@ -2311,6 +2398,11 @@ int sequentialEvaluation( void ) {
 	// Left associative
 	// eval first operand than discard it
 
+	int values[2][2] = {
+		{0,0} , {0,1}
+		{1,0} , {1,1}
+	} ;
+
 
 	int a=1, b=2, c=3, i=0; // commas act as separators in this line, not as an operator
 
@@ -2326,6 +2418,9 @@ int sequentialEvaluation( void ) {
 
 	i = (a, b, c);          // stores c into i, discarding the unused a and b rvalues
 
+
+	values[0,1]             // ! not the same thing as values[0][1]
+    values[1,1]             // ! not the same thing as values[1][1]
 
 	while ( a > 0, a-- );
 
@@ -2481,6 +2576,9 @@ void structs( void ) {
 
 int main( int argc, char** argv ) {
 
+	arrays_multiDimensionalJagged();
+	arrays_multiDimensional();
+
 	long long int sum = 0;
 	sum = functions_sum( 3 , 2, 4, 6 );
 	sum = functions_sum( 4 , 1, 3, 5, 7 );
@@ -2510,8 +2608,8 @@ int main( int argc, char** argv ) {
 
     everyIdentifierHasAnAddress();
 
-   arrays();
-   multiDimensionalArrays();
+    arrays();
+    arrays_multiDimensional();
 	initializationOfVariables();
 	sequentialEvaluation();
 	bitManipulation();
@@ -2542,7 +2640,7 @@ int main( int argc, char** argv ) {
 	division();
 
 	typePromotionPromoteToInt();
- 
+
 	// precedence of post increment
 	   int i[] = {3, 5};
 	   int *p = i;
@@ -2557,7 +2655,8 @@ int main( int argc, char** argv ) {
 
 	literals();
 
-   bitFields();
+    bitFields();
+
 
 	int b = 5;
 	swap( &a, &b );
