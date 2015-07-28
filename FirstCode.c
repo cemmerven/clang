@@ -1695,6 +1695,19 @@ void arrays_multiDimensional() {
 		}
 	};
 
+	int distanceAsBytes = (int)&valuesA[0][0] - (int)&valuesA[1][0];
+
+	// see disassembly
+	int value = 0;
+	value = valuesA[0][0];
+	value = valuesA[0][1];
+
+	value = valuesA[1][0];
+	value = valuesA[1][1];
+
+	value = valuesA[2][0];
+	value = valuesA[3][1];
+
 	const int lengthI = 4;
 	const int lengthJ = 3;
 	const int lengthK = 2;
@@ -1787,7 +1800,83 @@ void arrays_multiDimensionalJagged() {
 
 	}//fori
 
-	// TODO : we need lots of "free"s here...
+
+	int distanceAsBytes = (int)&values[0][0] - (int)&values[1][0];
+
+	// see disassembly
+	int value = 0;
+	value = values[0][0];
+	value = values[0][1];
+	value = values[0][2];
+
+	value = values[1][0];
+	value = values[1][1];
+	value = values[1][2];
+
+	// TODO : we need lots of "free()"s here...
+
+}//arrays_multiDimensionalJagged
+
+//-----------------------------------------------------------------------------
+
+void arrays_multiDimensionalJaggedvsFlat() {
+
+	// jagged array sample
+	// refer https://en.wikipedia.org/wiki/Jagged_array
+
+	int** jagged = NULL;
+    int   flat[3][3] = { {0,1,2}, {10,11,12}, {20,21,22} };
+
+    // TODO : implement check for return value of malloc for an allocation error
+    jagged = (int**) malloc( 2 * sizeof(int*) );
+    jagged[ 0 ] = NULL;
+    jagged[ 1 ] = NULL;
+
+    int arrayCount = 3;
+    const int leastElementCount = 2;
+	for ( int i = 0; i < arrayCount; i++ ) {
+
+		int  length = i + leastElementCount;
+		int* buffer = malloc( length * sizeof(int) );
+
+		jagged[ i ] = buffer;
+
+		// fill the buffer
+		for ( int j = 0; j < length; j++ ) {
+
+			jagged[ i ][ j ] = i*10 + j;
+
+		}//forj
+
+	}//fori
+
+	int distanceAsBytes = 0;
+	distanceAsBytes = (int)&jagged[0][0] - (int)&jagged[1][0];
+	distanceAsBytes = (int)&flat[0][0]   - (int)&flat[1][0];
+
+	// see disassembly
+	int value = 0;
+
+	value = flat[0][0];
+	value = jagged[0][0];
+
+	value = jagged[0][0];
+	value = jagged[0][1];
+	value = jagged[0][2];
+
+	value = jagged[1][0];
+	value = jagged[1][1];
+	value = jagged[1][2];
+
+	value = flat[0][0];
+	value = flat[0][1];
+	value = flat[0][2];
+
+	value = flat[1][0];
+	value = flat[1][1];
+	value = flat[1][2];
+
+	// TODO : we need lots of "free()"s here...
 
 }//arrays_multiDimensionalJagged
 
@@ -2398,9 +2487,8 @@ int sequentialEvaluation( void ) {
 	// Left associative
 	// eval first operand than discard it
 
-	int values[2][2] = {
-		{0,0} , {0,1}
-		{1,0} , {1,1}
+	int values[2][3] = {
+		{0,10,22} , {0,11,22}
 	} ;
 
 
@@ -2419,8 +2507,8 @@ int sequentialEvaluation( void ) {
 	i = (a, b, c);          // stores c into i, discarding the unused a and b rvalues
 
 
-	values[0,1]             // ! not the same thing as values[0][1]
-    values[1,1]             // ! not the same thing as values[1][1]
+	values[0,1];             // ! not the same thing as values[0][1]
+    values[1,1];             // ! not the same thing as values[1][1]
 
 	while ( a > 0, a-- );
 
@@ -2576,6 +2664,7 @@ void structs( void ) {
 
 int main( int argc, char** argv ) {
 
+	arrays_multiDimensionalJaggedvsFlat();
 	arrays_multiDimensionalJagged();
 	arrays_multiDimensional();
 
