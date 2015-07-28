@@ -1777,7 +1777,7 @@ void arrays_multiDimensionalJagged() {
 
 	int** values = NULL;
 
-    // TODO : implement check for return value of malloc for an allocation error
+    // TODO : implement check for return value of all "malloc()"s for an allocation error
     values = (int**) malloc( 2 * sizeof(int*) );
     values[ 0 ] = NULL;
     values[ 1 ] = NULL;
@@ -1827,7 +1827,7 @@ void arrays_multiDimensionalJaggedvsFlat() {
 	int** jagged = NULL;
     int   flat[3][3] = { {0,1,2}, {10,11,12}, {20,21,22} };
 
-    // TODO : implement check for return value of malloc for an allocation error
+    // TODO : implement check for return value of all "malloc"s for an allocation error
     jagged = (int**) malloc( 2 * sizeof(int*) );
     jagged[ 0 ] = NULL;
     jagged[ 1 ] = NULL;
