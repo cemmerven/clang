@@ -726,7 +726,7 @@ void operators_relational( void ) {
   int b = 3;
   int c = 0;
 
-  _Bool result = false;
+  _Bool result = 0;
 
   result = a > b;
 
@@ -747,7 +747,7 @@ void operators_logical( void ) {
   int b = 3;
   int c = 0;
 
-  _Bool result = false;
+  _Bool result = 0;
 
   // equality
   result = a == a;
@@ -1672,6 +1672,21 @@ void arrays( void ) {
    arrC[ 1 ] = 20;
 
 }//arrays
+
+//-----------------------------------------------------------------------------
+
+void arrays_variableSize( int length ) {
+
+	//int valuesA[ length ] = {}; // error : variable-sized object may not be initialized
+	int valuesA[ length ];
+
+	int* valuesB = malloc( length * sizeof(int) );
+
+	int loop = length;
+	while( loop-- )
+	   valuesB[ loop ] = valuesA[ loop ] = 0;
+
+}//arrays_variableSize
 
 //-----------------------------------------------------------------------------
 
@@ -2671,6 +2686,11 @@ typedef struct TFoo {
 	//TBar* pBar; // error :  TBar is not a type definition therefore TBar is unknown type, use: "struct TBar* pBar"  or  "Bar* pBar"
 } Foo;
 
+// gcc specific alignment attribute. See also __alignof__ (type)
+struct TAlign {
+    uint8_t  ui8  __attribute__((aligned(16)));
+    uint16_t ui16 __attribute__((aligned(16)));
+};
 
 struct PointX structs_asParameterAndReturnValue( struct PointX point ) {
 
@@ -2749,8 +2769,36 @@ void structs( void ) {
 
 //-----------------------------------------------------------------------------
 
+struct TMeasurements {
+
+	unsigned int length;
+	long double values[];
+
+};
+
+void structs_flexibleArrayMember( measurementCount ) {
+
+   struct TMeasurements* pMsr;
+
+   size_t bytesAllocated = sizeof(struct TMeasurements) + measurementCount * sizeof(long double);
+   pMsr = malloc( bytesAllocated );
+   pMsr->length = measurementCount;
+
+   const int upperLimit = 10;
+   int loop = measurementCount;
+
+   while ( loop-- )
+	   pMsr->values[ loop ] = (long double)rand();
+
+}//structs_flexibleArrayMember
+
+//-----------------------------------------------------------------------------
 
 int main( int argc, char** argv ) {
+
+	structs_flexibleArrayMember( 4 );
+
+	arrays_variableSize( 3 );
 
 	unions();
 
