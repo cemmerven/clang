@@ -2221,6 +2221,40 @@ long long int functions_sum( int argc, ... ) {
 
 typedef union {
 
+	char  byte;
+	short word;
+	int   integer;
+	long double decimal;
+	char text[12];
+
+} Mix;
+
+typedef union {
+
+	struct {
+		char cD;
+		char cC;
+		char cB;
+		char cA;
+	};
+
+	struct {
+		short sL;
+		short sH;
+	};
+
+	struct {
+	    int iValue;
+	};
+
+	struct {
+	    char car[4];
+	};
+
+} MixCSI;
+
+typedef union {
+
 	struct {
 		int mantissa : 23; // LSb little endian
 		int exponent : 8;
@@ -2231,9 +2265,17 @@ typedef union {
 
 } FloatBits;
 
+typedef union {
+
+	Mix        mix;
+	MixCSI     mixCSI;
+	FloatBits  bits;
+
+} VeryMix;
 
 void unions( void ) {
 
+   // left uninitialized
    FloatBits bits;
    size_t size = 0;
 
@@ -2242,6 +2284,52 @@ void unions( void ) {
    bits.fv      = -3.14F;
    bits.bv.sign = 0;
 
+   // initialize with zeros
+   MixCSI mcsi = {};
+   mcsi.iValue = 0xFAFBFCFD;
+
+   size = sizeof( MixCSI );
+
+   char c = mcsi.cA;
+
+   c = mcsi.cB;
+   c = mcsi.cC;
+   c = mcsi.cD;
+
+   int s =  mcsi.sL;
+   s =  mcsi.sH;
+
+   int i = mcsi.iValue;
+
+   mcsi.cD = 0xFF;
+
+   mcsi.sH = 0xF1F2;
+
+   int loop = 4;
+   while ( loop-- )
+	  mcsi.car[ loop ] = 68 - loop;
+
+   // initialize with zeros
+   Mix mix = {};
+   size = sizeof( Mix );
+
+   mix.decimal = -3.14L;
+   mix.decimal = LDBL_MAX;
+
+   loop = 12;
+   while ( loop-- )
+	  mix.text[ loop ] = 80 - loop;
+
+
+   // initialize with zeros
+   VeryMix vmx = {};
+   char* pc = (char*) &vmx;
+
+   loop = sizeof( VeryMix );
+   while ( loop-- )
+	   *pc++ = 0;
+
+   vmx.mixCSI.cD = 65;
 
 }//unions
 
@@ -2663,6 +2751,8 @@ void structs( void ) {
 
 
 int main( int argc, char** argv ) {
+
+	unions();
 
 	arrays_multiDimensionalJaggedvsFlat();
 	arrays_multiDimensionalJagged();
