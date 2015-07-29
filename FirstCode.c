@@ -2799,7 +2799,7 @@ void structs_flexibleArrayMember( measurementCount ) {
 #define RDZ_RANDOM_RANGE_ERROR (2)
 #define RDZ_ALLOCATION_ERROR   (3)
 
-int getRandomizedArray( int min, int max, int elementCount, int** outArray ) {
+int getRandomizedArray( int min, int max, const int elementCount, int** outArray ) {
 
 	if ( elementCount <= 0 || elementCount >= INT_MAX / 2 ) {
        return RDZ_ARRAY_SIZE_ERROR;
@@ -2833,13 +2833,69 @@ int getRandomizedArray( int min, int max, int elementCount, int** outArray ) {
 
 //-----------------------------------------------------------------------------
 
+#define SPLT_OK                         (0)
+#define SPLT_SPLIT_INDEX_OUT_OF_BOUNDS  (1)
+#define SPLT_INPUT_ARRAY_IS_NULL        (2)
+#define SPLT_INVALID_ARRAY_LENGTH       (3)
+#define SPLT_ALLOCATION_ERROR           (4)
+
+int split( int const* inArray, const int elementCount, const int splitAfter, int** outLeft, int** outRight ) {
+
+	if ( inArray == NULL ) {
+	   return SPLT_INPUT_ARRAY_IS_NULL;
+	}
+
+	if ( elementCount <= 0 ) {
+	   return SPLT_INVALID_ARRAY_LENGTH;
+	}
+
+	if ( splitAfter > elementCount ) {
+	   return SPLT_SPLIT_INDEX_OUT_OF_BOUNDS;
+	}
+
+	int leftLegth  = splitAfter + 1;
+	int rightLegth = elementCount - leftLegth;
+
+	int* leftBuffer  = (int*) malloc( leftLegth );
+	if ( NULL == leftBuffer ) {
+       return SPLT_ALLOCATION_ERROR;
+	}
+
+	int* rightBuffer = (int*) malloc( rightLegth );
+	if ( NULL == rightBuffer ) {
+	   if ( NULL != leftBuffer ) {
+		  free( leftBuffer );
+	   }
+       return SPLT_ALLOCATION_ERROR;
+	}
+
+	memcpy( leftBuffer,  &inArray[ 0 ],          leftLegth * sizeof(int) );
+	memcpy( rightBuffer, &inArray[ leftLegth ], rightLegth * sizeof(int) );
+
+	*outLeft  = leftBuffer;
+	*outRight = rightBuffer;
+
+    return SPLT_OK;
+
+}//split
+
+//-----------------------------------------------------------------------------
+
 int main( int argc, char** argv ) {
 
-	int* array = NULL;
-	int resultCode = 0;
+	int* array             = NULL;
+	int resultCode         = 0;
+	const int elementCount = 10;
 
-	resultCode = getRandomizedArray( 9, -9, 20, &array );
+	resultCode = getRandomizedArray( 9, -9, elementCount, &array );
     if ( RDZ_OK != resultCode ) {
+    	exit( EXIT_FAILURE );
+    }
+
+	int* left  = NULL;
+	int* right = NULL;
+	resultCode = split( array, elementCount, 3, &left, &right );
+    if ( SPLT_OK != resultCode ) {
     	exit( EXIT_FAILURE );
     }
 
