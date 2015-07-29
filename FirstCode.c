@@ -2869,7 +2869,7 @@ int split( int const* inArray, const int elementCount, const int splitAfter, int
        return SPLT_ALLOCATION_ERROR;
 	}
 
-	memcpy( leftBuffer,  &inArray[ 0 ],          leftLegth * sizeof(int) );
+	memcpy( leftBuffer,  &inArray[ 0 ], leftLegth * sizeof(int) );
 	memcpy( rightBuffer, &inArray[ leftLegth ], rightLegth * sizeof(int) );
 
 	*outLeft  = leftBuffer;
