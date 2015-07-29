@@ -1844,11 +1844,9 @@ void arrays_multiDimensionalJaggedvsFlat() {
     int   flat[3][3] = { {0,1,2}, {10,11,12}, {20,21,22} };
 
     // TODO : implement check for return value of all "malloc"s for an allocation error
+    int arrayCount = 3;
     jagged = (int**) malloc( 2 * sizeof(int*) );
-    jagged[ 0 ] = NULL;
-    jagged[ 1 ] = NULL;
 
-    int arrayCount = 2;
     const int leastElementCount = 2;
 	for ( int i = 0; i < arrayCount; i++ ) {
 
@@ -2103,7 +2101,6 @@ void bitFields( void ) {
 	real.decimal  = 2345;
 	real.fraction = 0;
 
-
 }//bitFields
 
 //-----------------------------------------------------------------------------
@@ -2212,6 +2209,8 @@ long long int functions_recursiveFactorial( long long int number ) {
 	return number == 0 ? 1 : number * functions_recursiveFactorial( number - 1 );
 
 }//functions_recursionFactorial
+
+//-----------------------------------------------------------------------------
 
 long long int functions_sum( int argc, ... ) {
 
@@ -2611,8 +2610,8 @@ int sequentialEvaluation( void ) {
 	i = (a, b, c);          // stores c into i, discarding the unused a and b rvalues
 
 
-	values[0,1];             // ! not the same thing as values[0][1]
-    values[1,1];             // ! not the same thing as values[1][1]
+	values[0,1];             // ! not the same thing as values[0][1] : discards 0, use 1 as index
+    values[1,1];             // ! not the same thing as values[1][1] : discards left 1, use riht 1 as index
 
 	while ( a > 0, a-- );
 
@@ -2795,7 +2794,54 @@ void structs_flexibleArrayMember( measurementCount ) {
 
 //-----------------------------------------------------------------------------
 
+#define RDZ_OK                 (0)
+#define RDZ_ARRAY_SIZE_ERROR   (1)
+#define RDZ_RANDOM_RANGE_ERROR (2)
+#define RDZ_ALLOCATION_ERROR   (3)
+
+int getRandomizedArray( int min, int max, int elementCount, int** outArray ) {
+
+	if ( elementCount <= 0 || elementCount >= INT_MAX / 2 ) {
+       return RDZ_ARRAY_SIZE_ERROR;
+	}
+
+	if ( min > max ) {
+       min ^= max ^= min ^= max;
+	}
+
+	if ( max >= RAND_MAX ) {
+	   return RDZ_RANDOM_RANGE_ERROR;
+	}
+
+	int* intBuffer = (int*) malloc( elementCount * sizeof(int) );
+	if ( intBuffer == NULL ) {
+	   return RDZ_ALLOCATION_ERROR;
+	}
+
+	for ( int i = 0; i < elementCount; i++ ) {
+
+		int value = min + (rand() % (int)(max - min + 1) );
+		intBuffer[ i ] = value;
+
+	}//for
+
+	*outArray = intBuffer;
+
+	return RDZ_OK;
+
+}//getRandomizedArray
+
+//-----------------------------------------------------------------------------
+
 int main( int argc, char** argv ) {
+
+	int* array = NULL;
+	int resultCode = 0;
+
+	resultCode = getRandomizedArray( 9, -9, 20, &array );
+    if ( RDZ_OK != resultCode ) {
+    	exit( EXIT_FAILURE );
+    }
 
 	structs_flexibleArrayMember( 4 );
 
