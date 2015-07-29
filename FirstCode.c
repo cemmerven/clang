@@ -1789,15 +1789,12 @@ void arrays_multiDimensionalJagged() {
 
 	// jagged array sample
 	// refer https://en.wikipedia.org/wiki/Jagged_array
-
 	int** values = NULL;
 
     // TODO : implement check for return value of all "malloc()"s for an allocation error
-    values = (int**) malloc( 2 * sizeof(int*) );
-    values[ 0 ] = NULL;
-    values[ 1 ] = NULL;
-
     int arrayCount = 3;
+    values = (int**) malloc( arrayCount * sizeof(int*) );
+
     const int leastElementCount = 2;
 	for ( int i = 0; i < arrayCount; i++ ) {
 
@@ -1828,6 +1825,10 @@ void arrays_multiDimensionalJagged() {
 	value = values[1][1];
 	value = values[1][2];
 
+	value = values[2][0];
+	value = values[2][1];
+	value = values[2][2];
+
 	// TODO : we need lots of "free()"s here...
 
 }//arrays_multiDimensionalJagged
@@ -1847,7 +1848,7 @@ void arrays_multiDimensionalJaggedvsFlat() {
     jagged[ 0 ] = NULL;
     jagged[ 1 ] = NULL;
 
-    int arrayCount = 3;
+    int arrayCount = 2;
     const int leastElementCount = 2;
 	for ( int i = 0; i < arrayCount; i++ ) {
 
