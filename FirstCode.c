@@ -20,57 +20,8 @@
 #include <stdlib.h>
 
 #include <stdbool.h>
-
-//-----------------------------------------------------------------------------
-
-
-/*  Return the ULP of q.
-
-    This was inspired by Algorithm 3.5 in Siegfried M. Rump, Takeshi Ogita, and
-    Shin'ichi Oishi, "Accurate Floating-Point Summation", _Technical Report
-    05.12_, Faculty for Information and Communication Sciences, Hamburg
-    University of Technology, November 13, 2005.
-*/
-float ULP( float q ) {
-
-    // SmallestPositive is the smallest positive floating-point number.
-    static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
-
-    /*  Scale is .75 ULP, so multiplying it by any significand in [1, 2) yields
-        something in [.75 ULP, 1.5 ULP) (even with rounding).
-    */
-    static const float Scale = 0.75 * FLT_EPSILON;
-
-    q = fabs(q);
-
-    // link with linker command line option -lm (Link Math library) otherwise fmax goes undefined
-    return fmax(SmallestPositive, q - (q - q * Scale));
-
-}//ULP
-
-//-----------------------------------------------------------------------------
-
-/*  Return the next floating-point value after the finite value q.
-
-    This was inspired by Algorithm 3.5 in Siegfried M. Rump, Takeshi Ogita, and
-    Shin'ichi Oishi, "Accurate Floating-Point Summation", _Technical Report
-    05.12_, Faculty for Information and Communication Sciences, Hamburg
-    University of Technology, November 13, 2005.
-*/
-
-float nextAfter( float q ) {
-    // SmallestPositive is the smallest positive floating-point number.
-    static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
-
-    /*  Scale is .625 ULP, so multiplying it by any significand in [1, 2)
-        yields something in [.625 ULP, 1.25 ULP].
-    */
-    static const float Scale = 0.625 * FLT_EPSILON;
-
-    // link with linker command line option -lm (Link Math library) otherwise fmax goes undefined
-    return q + fmax(SmallestPositive, fabs(q)*Scale);
-
-}//nextAfter
+#include <stdint.h>
+#include <stdarg.h>
 
 //-----------------------------------------------------------------------------
 
@@ -107,6 +58,10 @@ void integers( void ) {
 
 	size = sizeof( a );
 	size = sizeof( ub );
+
+	ub = (unsigned) 0xFFFFFFFF;
+	a  = (signed) ub;
+    ub = 0xFFFFFFFF;
 
 }//integers
 
@@ -174,6 +129,94 @@ void decimals_Double( void ) {
 
 //-----------------------------------------------------------------------------
 
+/*  Return the ULP of q.
+
+    This was inspired by Algorithm 3.5 in Siegfried M. Rump, Takeshi Ogita, and
+    Shin'ichi Oishi, "Accurate Floating-Point Summation", _Technical Report
+    05.12_, Faculty for Information and Communication Sciences, Hamburg
+    University of Technology, November 13, 2005.
+*/
+float ULP( float q ) {
+
+    // SmallestPositive is the smallest positive floating-point number.
+    static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
+
+    /*  Scale is .75 ULP, so multiplying it by any significand in [1, 2) yields
+        something in [.75 ULP, 1.5 ULP) (even with rounding).
+    */
+    static const float Scale = 0.75 * FLT_EPSILON;
+
+    q = fabs(q);
+
+    // link with linker command line option -lm (Link Math library) otherwise fmax goes undefined
+    return fmax(SmallestPositive, q - (q - q * Scale));
+
+}//ULP
+
+//-----------------------------------------------------------------------------
+
+/*  Return the next floating-point value after the finite value q.
+
+    This was inspired by Algorithm 3.5 in Siegfried M. Rump, Takeshi Ogita, and
+    Shin'ichi Oishi, "Accurate Floating-Point Summation", _Technical Report
+    05.12_, Faculty for Information and Communication Sciences, Hamburg
+    University of Technology, November 13, 2005.
+*/
+
+float nextAfter( float q ) {
+    // SmallestPositive is the smallest positive floating-point number.
+    static const float SmallestPositive = FLT_EPSILON * FLT_MIN;
+
+    /*  Scale is .625 ULP, so multiplying it by any significand in [1, 2)
+        yields something in [.625 ULP, 1.25 ULP].
+    */
+    static const float Scale = 0.625 * FLT_EPSILON;
+
+    // link with linker command line option -lm (Link Math library) otherwise fmax goes undefined
+    return q + fmax(SmallestPositive, fabs(q)*Scale);
+
+}//nextAfter
+
+//-----------------------------------------------------------------------------
+
+unsigned long long floatSteps( void ) {
+
+	unsigned long long steps = 0;
+	long double next         = .0F;
+    float number             = .0F;
+    unsigned int diff        = 0;
+
+	for ( next = -FLT_MIN, steps = 1; next < FLT_MAX; steps++ ) {
+
+		number = nextafterf( number, FLT_MAX );
+        if ( number == HUGE_VALF ) {
+           break;
+        }
+
+        next = number;
+
+	}//for
+
+	// 2^32 - (representable negative + positive float count)
+	diff = UINT_MAX - steps;
+
+	// another way
+	float f = - FLT_MAX;
+	long long count = 1;
+
+	do {
+
+       f = nextafterf( f, FLT_MAX );
+	   count++;
+
+	} while ( f != FLT_MAX );
+
+	return steps;
+
+}//floatSteps
+
+//-----------------------------------------------------------------------------
+
 void floatQuirks( void ) {
 
 	float x = 1.1;
@@ -228,6 +271,11 @@ void floatQuirks( void ) {
    int loop = 10;
    f = 0.0F;
 
+   double value = .02;
+   double diff = value - value;
+   result = diff == NAN;
+
+
    while ( loop-- ) {
       f += 0.1F;
    }
@@ -256,11 +304,15 @@ void pointers1( void ) {
 
    int a = 0;
    int b = 0;
+
+
    unsigned int addressX = 0;
    unsigned int addressY = 0;
 
-   char c[] = "vwxyz";
+   char ar[] = "vwxyz";
    int  *pi;
+   int* piA = NULL;
+   int* piB = NULL;
 
    pi = 0;
    pi = '\0';
@@ -278,8 +330,20 @@ void pointers1( void ) {
    pi++;
    *pi = 7;
 
-   pi  = c;
+   pi  = ar;
    *pi = 1684234849;
+
+   a   = 3;
+   piA = &a;
+   piB = &a;
+
+   int c = 0;
+   c = *piA;
+   c = *piB;
+
+   c = 4;
+   *piB = c;
+   c = a + *piA + *piB;
 
    char d[] = "efgh";
    *pi = *(int*)d;
@@ -296,7 +360,7 @@ void pointers2( void ) {
    int d = 0;
    int e = 0;
 
-   int* pi = NULL;
+   int* pi  = NULL;
 
    int arr[] = { 0, 0, 0, 0, 0 };
 
@@ -393,6 +457,22 @@ void pointers2( void ) {
 
 void pointers3( void ) {
 
+	int    a =  3;
+	int   *b = &a;
+	int  **c = &b;
+	int ***d = &c;
+
+	   a = 2;
+	  *b = 3;
+     **c = 4;
+	***d = 5;
+
+}//pointers3
+
+//-----------------------------------------------------------------------------
+
+void pointers4( void ) {
+
    int arrI[ 5 ] = { 10, 20, 30, 40, 50 };
 
    int *piA = NULL;
@@ -419,7 +499,7 @@ void pointers3( void ) {
    size = sizeof( long double );
    distance = pldA - pldB;
 
-}//pointers3
+}//pointers4
 
 //-----------------------------------------------------------------------------
 
@@ -456,12 +536,12 @@ void literals( void ) {
    // GCC -std=c99 komut satırı parametresi ve #include<stdbool.h> gerekli
    _Bool result = false;
 
-/*
-    Decimal: 97
-   	Hex    : 0x61
-   	Binary : 0b01100001
-   	Octal  : 0141
-*/
+   /*
+   Decimal: 97
+   Hex    : 0x61
+   Binary : 0b01100001
+   Octal  : 0141
+   */
    char c = 0;
 
    c = 97;   // decimal (base 10) literal
@@ -521,11 +601,9 @@ void literals( void ) {
    wchar_t wc01 = L'ç';
    size = sizeof( wc01 );
 
-
    // UNICODE string literal
    wchar_t text06[] = L"ĞÜŞİÖÇ ğüşiöç Iı";
    size = sizeof( text06 );
-
 
    // IEEE 754 single precision floating point number (4 Byte)
    float f01 = 0;
@@ -541,16 +619,31 @@ void literals( void ) {
    float electronCharge = 1.60217657e-19;
    float protonMass     = 1.67262178e-27;
 
-
    // IEEE 754 double precision floating point number (8 Byte)
    double d01 = .0;
    double d02 = .456;
    double d03 = DBL_EPSILON;
 
-   // intel specific extendet 80bit (10 Byte)
+   // intel specific extended 80bit (10 Byte)
    long double ldGR = 1.618L;
    long double ldPI = 3.14159265358979323846264338328L;
    long double ld01 = LDBL_EPSILON;
+
+   /* HEXADECIMAL FLOATS
+    0x   .  13 x 4 = 52 decimal digits  (Power of 2 decimal digits)
+            13 hexadecimal digits       (P - decimal)
+   (0x1) . (999999999999A)              P(-4)
+   */
+   // C99 specific IEEE 754 double precision floating point HEXADECIMAL (base 16) literal
+   // 1.100110011001100110011001100110011001100110011001101 x 2^(-4).
+   double d04 = 0x1.999999999999Ap-4;
+
+   double d05 = 0xF.999999999999aP-4;
+   double d06 = 0xF.FFFFFFFFFFFFFP-4;
+   double d07 = 0x1p-1;
+   double d08 = 0x2p-1;
+   double d09 = 0x3p-1;
+
 
 }//literals
 
@@ -769,8 +862,8 @@ void operators_conditionalExpression( void ) {
    int c = 18;
    climate = ( c <= -10 ) ? colder :
              ( c > -10 ) && ( c <= 10 ) ? cold :
-             ( c >  10 ) && ( c <= 25 ) ? warm:
-             ( c >  25 ) && ( c <= 35 ) ? hot:
+             ( c >  10 ) && ( c <= 25 ) ? warm :
+             ( c >  25 ) && ( c <= 35 ) ? hot  :
              hotter;
 
 }//operators_conditionalExpression
@@ -926,6 +1019,184 @@ void operators_binary( void ) {
 
 //-----------------------------------------------------------------------------
 
+void controlFlow_if() {
+
+   int a = 2;
+   int b = 3;
+   int c = 0;
+
+   _Bool result = a < b;
+
+   if ( result )
+      c = 1;
+   else
+	  c = 0;
+
+   if ( a < b )
+      c = 1;
+   else
+	  c = 0;
+
+   if ( !(a < b) )
+      c = 0;
+
+
+   enum { colder, cold, warm, hot, hotter } climate = colder;
+
+   c = 18;
+
+   // if ladder
+   if ( c <= -10 ) {
+
+	  climate = colder;
+
+   } else if ( ( c > -10 ) && ( c <= 10 ) ) {
+
+	   climate = cold;
+
+   } else if ( ( c >  10 ) && ( c <= 25 ) ) {
+
+	   climate = warm;
+
+   } else if ( ( c >  25 ) && ( c <= 35 ) ) {
+
+	   climate = hot;
+
+   } else {
+
+	   climate = hotter;
+
+   }//if
+
+   // if-ladder switch case alternative
+   climate = ( c <= -10 ) ? colder :
+             ( c > -10 ) && ( c <= 10 ) ? cold :
+             ( c >  10 ) && ( c <= 25 ) ? warm :
+             ( c >  25 ) && ( c <= 35 ) ? hot  :
+             hotter;
+
+
+}//controlFlow_if
+
+//-----------------------------------------------------------------------------
+
+void controlFlow_Switch() {
+
+   int  value = 3;
+   char rating = 'X';
+
+   // fall-through switch
+   switch( value ) {
+
+	   case 0 :
+	   case 1 :
+	   case 2 :
+		   rating = 'D';
+		   break;
+
+	   case 3 :
+	   case 4 :
+	   case 5 :
+		   rating = 'C';
+	   break;
+
+	   case 6 :
+	   case 7 :
+	   case 8 :
+		   rating = 'B';
+		   break;
+
+	   case 9 :
+	   case 10 :
+		   rating = 'A';
+		   break;
+
+	   default :
+		   rating = 'X';
+
+   }//switch
+
+	enum { colder, cold, warm, hot, hotter } climate = cold;
+	wchar_t* text = "bilinmiyor";
+
+	// switch without default
+	switch ( climate ) {
+		case colder : text = L"çok soğuk"; break;
+		case cold   : text = L"soğuk";     break;
+		case warm   : text = L"ılık";      break;
+		case hot    : text = L"sıcak";     break;
+		case hotter : text = L"çok sıcak"; break;
+	};
+
+}//controlFlow_Switch
+
+//-----------------------------------------------------------------------------
+
+/*
+ * switch sample : lookup table
+ */
+float sinus( int angle ) {
+
+	// TODO : process sign 0..360 degrees
+	angle = angle > 45 ? 90 - angle : angle;
+
+	switch( angle ) {
+
+    	default : return NAN;
+
+	    case 0  : return .0000;
+		case 1  : return .0175;
+		case 2  : return .0349;
+		case 3  : return .0523;
+		case 4  : return .0698;
+		case 5  : return .0872;
+		case 6  : return .1045;
+		case 7  : return .1219;
+		case 8  : return .1392;
+		case 9  : return .1564;
+		case 10 : return .1736;
+		case 11 : return .1908;
+		case 12 : return .2079;
+		case 13 : return .2250;
+		case 14 : return .2419;
+		case 15 : return .2588;
+		case 16 : return .2756;
+		case 17 : return .2924;
+		case 18 : return .3090;
+		case 19 : return .3256;
+		case 20 : return .3420;
+		case 21 : return .3584;
+		case 22 : return .3746;
+		case 23 : return .3907;
+		case 24 : return .4067;
+		case 25 : return .4226;
+		case 26 : return .4384;
+		case 27 : return .4540;
+		case 28 : return .4695;
+		case 29 : return .4848;
+		case 30 : return .5000;
+		case 31 : return .5150;
+		case 32 : return .5299;
+		case 33 : return .5446;
+		case 34 : return .5592;
+		case 35 : return .5736;
+		case 36 : return .5878;
+		case 37 : return .6018;
+		case 38 : return .6157;
+		case 39 : return .6293;
+		case 40 : return .6428;
+		case 41 : return .6561;
+		case 42 : return .6691;
+		case 43 : return .6820;
+		case 44 : return .6947;
+		case 45 : return .7071;
+
+	};//switch
+
+}//sinus
+
+//-----------------------------------------------------------------------------
+
 typedef int (*callsomething)( int, int );
 
 int dosomething( int a, int b ) {
@@ -939,7 +1210,7 @@ int dosomething( int a, int b ) {
 
 void dosomething_endmarker( void ) {
 
- 
+
 }//dosomething_endmarker
 
 void messWithTheFunctions() {
@@ -1117,13 +1388,13 @@ void functionPointers( void ) {
 
    pv = add;
 
-   // fun address assignment with and without casting
+   // function address assignment with and without casting
    fp = (int(*)(int,int)) pv;
    fp = pv;
 
    result = fp( 5, 3 );
 
-   // cast than call
+   // cast to function poimter than call :  int(*)(int,int)
    result = ( (int(*)(int,int))pv )( 5, 3 );
 
    pv = sub;
@@ -1222,6 +1493,61 @@ char* getLatinName( Days day ) {
 
 }//getLatinName
 
+// enumeration type definition with TAG
+typedef enum TAllColor {
+	red = 3,
+	green,
+	blue,
+	cyan,
+	magenta,
+	yellow,
+	black,
+	white
+} AllColor;
+
+void enums( void ) {
+
+	enum { red, green, blue } colorA,
+                              colorB,
+	                          colorC,
+	                          colorD;
+
+	// enum { red, green, blue } colorE; // error: redeclaration of enumerator
+
+	enum PrintColor { cyan, magenta, yellow, black };
+
+	enum PrintColor colorW;
+	enum PrintColor colorX;
+	enum PrintColor colorY = black;
+	enum PrintColor colorZ = magenta;
+
+    enum TAllColor allA;
+    enum TAllColor allB = black;
+	AllColor       allC;
+	AllColor       allD = white;
+
+	size_t size = 0;
+	size = sizeof( colorA );
+
+	colorA = 0;
+	colorA = 1;
+	colorA = 2;
+
+	colorA = red;
+	colorA = green;
+	colorA = blue;
+
+	colorA = colorA - 1;
+	colorA = colorA - 1;
+	colorA = colorA - 1;
+
+	colorA = INT_MIN;
+	colorA = INT_MAX;
+
+    colorA = colorZ;
+
+}//enums
+
 char* getSemiNordicName( Days day ) {
 
 	static char error[] = "ukjent dag kode";
@@ -1264,8 +1590,8 @@ void enumerationSample( void ) {
 
 typedef enum {
    lesser  = -1,
-   equal   = 0,
-   greater = 1,
+   equal   =  0,
+   greater = +1,
 } CompareResult;
 
 typedef enum {
@@ -1295,12 +1621,14 @@ void arrays( void ) {
    char stringB[] = { 'A','B','C','D','E', '\0' };
    char stringC[] = { "ABCDE" };
 
-   wchar_t unicodeA[] = { L'�', L'�', L'�', L'�', L'�', L'�', 0 };
-   wchar_t unicodeB[] = L"������";
+   wchar_t unicodeA[] = { L'Ğ', L'Ü', L'Ş', L'İ', L'Ö', L'Ç', 0 };
+   wchar_t unicodeB[] = L"ĞÜŞİÖÇ";
 
-   int arrW[ 2 ] = { 1, 2, 3 }; // copy the first 2, discard the 3rd.
-   int arrX[ 3 ] = { 1, 2, 3 };
-   int arrY[ 4 ] = { 1, 2, 3 }; // copy the first 3, leave 4th uninitialized.
+   int arrQ[ 2 ] = { 1, 2, 3 }; // initialize the first 2, discard the 3rd.
+   int arrW[ 3 ] = { 1, 2, 3 }; // initialize all.
+   int arrX[ 4 ] = { 1, 2, 3 }; // initialize the first 3, leave 4th uninitialized.
+   int arrY[ 5 ] = { [2] = 30 };// initialize the 3rd. initialize the rest with zero.
+   int arrZ[ 5 ] = {};          // initialize all with zero.
 
    size_t size = 0;
    int count   = 0;
@@ -1347,7 +1675,25 @@ void arrays( void ) {
 
 //-----------------------------------------------------------------------------
 
-void multiDimensionalArrays() {
+void arrays_variableSize( int length ) {
+
+	//int valuesA[ length ] = {}; // error : variable-sized object may not be initialized
+	int valuesA[ length ];
+
+	int* valuesB = malloc( length * sizeof(int) );
+
+	int loop = length;
+	while( loop-- )
+	   valuesB[ loop ] = valuesA[ loop ] = 0;
+
+}//arrays_variableSize
+
+//-----------------------------------------------------------------------------
+
+// defines special type for ( 3 x 4 ) of integers.
+typedef int Special3D[ 3 ][ 4 ];
+
+void arrays_multiDimensional() {
 
     char valuesA[ 5 ][ 2 ] = { {0,1}, {2,3}, {4,5}, {6,7}, {8,9} };
 
@@ -1364,25 +1710,37 @@ void multiDimensionalArrays() {
 		}
 	};
 
-	const int sizeI = 4;
-	const int sizeJ = 3;
-	const int sizeK = 2;
+	int distanceAsBytes = (int)&valuesA[0][0] - (int)&valuesA[1][0];
 
-	size_t count = sizeof valuesE;
+	// see disassembly
+	int value = 0;
+	value = valuesA[0][0];
+	value = valuesA[0][1];
 
+	value = valuesA[1][0];
+	value = valuesA[1][1];
 
-	for ( int k = 0; k < sizeK; k++ ) {
+	value = valuesA[2][0];
+	value = valuesA[3][1];
 
-		for ( int j = 0; j < sizeJ; j++ ) {
+	const int lengthI = 4;
+	const int lengthJ = 3;
+	const int lengthK = 2;
 
-			for ( int i = 0; i < sizeI; i++ ) {
+	size_t size = sizeof valuesE;
+
+	for ( int k = 0; k < lengthK; k++ ) {
+
+		for ( int j = 0; j < lengthJ; j++ ) {
+
+			for ( int i = 0; i < lengthI; i++ ) {
 
 				int hundreds = k + 1;
 				int tens     = j + 1;
 				int ones     = i;
 
 				valuesE[ k ][ j ][ i ] = 100*hundreds + 10*tens + ones;
-				printf( "%d%d%d ",  hundreds, tens, ones );
+				printf( "%d%d%d ", hundreds, tens, ones );
 
 			}//fori
 
@@ -1390,7 +1748,151 @@ void multiDimensionalArrays() {
 
 	}//fork
 
-}//multiDimensionalArrays
+	Special3D* p3D = NULL;
+	size_t allocateBytes = sizeof(Special3D) * lengthK;
+
+	void* buffer = malloc( allocateBytes );
+	if ( buffer == NULL ) {
+		// not enough memory, terminate the program with failure
+	    exit( EXIT_FAILURE );
+	}
+
+	// Casting void* to int(*)[3][4]. Same effect as casting to Special3D*
+	p3D = (int(*)[3][4]) buffer;
+
+	for ( int k = 0; k < lengthK; k++ ) {
+
+		for ( int j = 0; j < lengthJ; j++ ) {
+
+			for ( int i = 0; i < lengthI; i++ ) {
+
+				int hundreds = k + 1;
+				int tens     = j + 1;
+				int ones     = i;
+
+				p3D[ k ][ j ][ i ] = 100*hundreds + 10*tens + ones;
+
+			}//fori
+
+		}//forj
+
+	}//fork
+
+    // free the previously allocated memory
+	free( p3D );
+
+}//arrays_multiDimensional
+
+//-----------------------------------------------------------------------------
+
+void arrays_multiDimensionalJagged() {
+
+	// jagged array sample
+	// refer https://en.wikipedia.org/wiki/Jagged_array
+	int** values = NULL;
+
+    // TODO : implement check for return value of all "malloc()"s for an allocation error
+    int arrayCount = 3;
+    values = (int**) malloc( arrayCount * sizeof(int*) );
+
+    const int leastElementCount = 2;
+	for ( int i = 0; i < arrayCount; i++ ) {
+
+		int  length = i + leastElementCount;
+		int* buffer = malloc( length * sizeof(int) );
+
+		values[ i ] = buffer;
+
+		// fill the buffer
+		for ( int j = 0; j < length; j++ ) {
+
+			values[ i ][ j ] = i*10 + j;
+
+		}//forj
+
+	}//fori
+
+
+	int distanceAsBytes = (int)&values[0][0] - (int)&values[1][0];
+
+	// see disassembly
+	int value = 0;
+	value = values[0][0];
+	value = values[0][1];
+	value = values[0][2];
+
+	value = values[1][0];
+	value = values[1][1];
+	value = values[1][2];
+
+	value = values[2][0];
+	value = values[2][1];
+	value = values[2][2];
+
+	// TODO : we need lots of "free()"s here...
+
+}//arrays_multiDimensionalJagged
+
+//-----------------------------------------------------------------------------
+
+void arrays_multiDimensionalJaggedvsFlat() {
+
+	// jagged array sample
+	// refer https://en.wikipedia.org/wiki/Jagged_array
+
+	int** jagged = NULL;
+    int   flat[3][3] = { {0,1,2}, {10,11,12}, {20,21,22} };
+
+    // TODO : implement check for return value of all "malloc"s for an allocation error
+    int arrayCount = 3;
+    jagged = (int**) malloc( 2 * sizeof(int*) );
+
+    const int leastElementCount = 2;
+	for ( int i = 0; i < arrayCount; i++ ) {
+
+		int  length = i + leastElementCount;
+		int* buffer = malloc( length * sizeof(int) );
+
+		jagged[ i ] = buffer;
+
+		// fill the buffer
+		for ( int j = 0; j < length; j++ ) {
+
+			jagged[ i ][ j ] = i*10 + j;
+
+		}//forj
+
+	}//fori
+
+	int distanceAsBytes = 0;
+	distanceAsBytes = (int)&jagged[0][0] - (int)&jagged[1][0];
+	distanceAsBytes = (int)&flat[0][0]   - (int)&flat[1][0];
+
+	// see disassembly
+	int value = 0;
+
+	value = flat[0][0];
+	value = jagged[0][0];
+
+	value = jagged[0][0];
+	value = jagged[0][1];
+	value = jagged[0][2];
+
+	value = jagged[1][0];
+	value = jagged[1][1];
+	value = jagged[1][2];
+
+	value = flat[0][0];
+	value = flat[0][1];
+	value = flat[0][2];
+
+	value = flat[1][0];
+	value = flat[1][1];
+	value = flat[1][2];
+
+	// TODO : we need lots of "free()"s here...
+
+}//arrays_multiDimensionalJagged
 
 //-----------------------------------------------------------------------------
 
@@ -1551,12 +2053,10 @@ void bitManipulation() {
 
 // Homemade fixed-point number
 typedef struct {
-   unsigned int sign     : 1;
-   unsigned int decimal  : 21;
    unsigned int fraction : 10;
+   unsigned int decimal  : 21;
+   unsigned int sign     : 1;
 } Minireal;
-
-typedef enum { black = 30, red, green, yellow, blue, magenta, cyan, white } Color;
 
 // refer : http://en.wikipedia.org/wiki/ANSI_escape_code
 // Fancy char for color-terminals
@@ -1594,13 +2094,12 @@ void bitFields( void ) {
     character.blink     = false;
 
 	// +2345.678
-	Minireal real = { 0, 2345, 678 };
+	Minireal real = { 0, 2345, 1 };
 
 	// -1234.567
 	real.sign     = 1;
-	real.decimal  = 1234;
+	real.decimal  = 2345;
 	real.fraction = 0;
-
 
 }//bitFields
 
@@ -1688,17 +2187,168 @@ CLEANUP:
 
 //-----------------------------------------------------------------------------
 
+int recursionLimit = 16;
+void functions_recursiveFunction( void ) {
+
+	if ( recursionLimit-- ) {
+		functions_recursiveFunction();
+	}
+
+}//functions_recursiveFunction
+
+long long int functions_recursiveFactorial( long long int number ) {
+
+	/*
+	if ( number == 0 ) {
+	   return 1;
+	} else {
+	   return number * functions_recursiveFactorial( number - 1 );
+	}
+    */
+
+	return number == 0 ? 1 : number * functions_recursiveFactorial( number - 1 );
+
+}//functions_recursionFactorial
+
+//-----------------------------------------------------------------------------
+
+long long int functions_sum( int argc, ... ) {
+
+	long long int sum = 0;
+	va_list valist;
+
+	// initialize macro
+	va_start( valist, argc );
+
+	for ( int i = 0; i < argc; i++)
+	{
+	   sum += va_arg(valist, int);
+	}
+
+	// clean valist left overs
+	va_end( valist );
+
+	return sum;
+
+}//functions_sum
+
+//-----------------------------------------------------------------------------
+
+typedef union {
+
+	char  byte;
+	short word;
+	int   integer;
+	long double decimal;
+	char text[12];
+
+} Mix;
+
 typedef union {
 
 	struct {
-		int mantissa : 23;
+		char cD;
+		char cC;
+		char cB;
+		char cA;
+	};
+
+	struct {
+		short sL;
+		short sH;
+	};
+
+	struct {
+	    int iValue;
+	};
+
+	struct {
+	    char car[4];
+	};
+
+} MixCSI;
+
+typedef union {
+
+	struct {
+		int mantissa : 23; // LSb little endian
 		int exponent : 8;
-		int sign     : 1;
+		int sign     : 1;  // MSb little endian
 	} bv;
 
 	float fv;
 
-}FloatBits;
+} FloatBits;
+
+typedef union {
+
+	Mix        mix;
+	MixCSI     mixCSI;
+	FloatBits  bits;
+
+} VeryMix;
+
+void unions( void ) {
+
+   // left uninitialized
+   FloatBits bits;
+   size_t size = 0;
+
+   size = sizeof( bits );
+
+   bits.fv      = -3.14F;
+   bits.bv.sign = 0;
+
+   // initialize with zeros
+   MixCSI mcsi = {};
+   mcsi.iValue = 0xFAFBFCFD;
+
+   size = sizeof( MixCSI );
+
+   char c = mcsi.cA;
+
+   c = mcsi.cB;
+   c = mcsi.cC;
+   c = mcsi.cD;
+
+   int s =  mcsi.sL;
+   s =  mcsi.sH;
+
+   int i = mcsi.iValue;
+
+   mcsi.cD = 0xFF;
+
+   mcsi.sH = 0xF1F2;
+
+   int loop = 4;
+   while ( loop-- )
+	  mcsi.car[ loop ] = 68 - loop;
+
+   // initialize with zeros
+   Mix mix = {};
+   size = sizeof( Mix );
+
+   mix.decimal = -3.14L;
+   mix.decimal = LDBL_MAX;
+
+   loop = 12;
+   while ( loop-- )
+	  mix.text[ loop ] = 80 - loop;
+
+
+   // initialize with zeros
+   VeryMix vmx = {};
+   char* pc = (char*) &vmx;
+
+   loop = sizeof( VeryMix );
+   while ( loop-- )
+	   *pc++ = 0;
+
+   vmx.mixCSI.cD = 65;
+
+}//unions
+
+//-----------------------------------------------------------------------------
 
 void typePromotion( void ) {
 
@@ -1940,6 +2590,10 @@ int sequentialEvaluation( void ) {
 	// Left associative
 	// eval first operand than discard it
 
+	int values[2][3] = {
+		{0,10,22} , {0,11,22}
+	} ;
+
 
 	int a=1, b=2, c=3, i=0; // commas act as separators in this line, not as an operator
 
@@ -1956,6 +2610,9 @@ int sequentialEvaluation( void ) {
 	i = (a, b, c);          // stores c into i, discarding the unused a and b rvalues
 
 
+	values[0,1];             // ! not the same thing as values[0][1] : discards 0, use 1 as index
+    values[1,1];             // ! not the same thing as values[1][1] : discards left 1, use riht 1 as index
+
 	while ( a > 0, a-- );
 
 	for ( int j = 0, k = 10; j < k; j++, k-- );
@@ -1971,31 +2628,307 @@ int sequentialEvaluation( void ) {
 
 //-----------------------------------------------------------------------------
 
+// global (link scope) identifier, with storage
+struct {
+	float fX;
+	float fY;
+} PointF;
+
+// declaration (can be many), no storage allocation :
+// "there is an identifier definition called PointF in the global (link scope) scope
+struct PointF;
+struct PointF;
+struct PointF;
+
+// global (link scope) identifiers, with storage
+struct {
+	int X;
+	int Y;
+} g_pointA, g_pointB, g_pointC, *g_pointer;
+
+
+// structure definition with TAG (PointD) to refer structure, no storage allocation
+struct PointD {
+	double dX;
+	double dY;
+};
+
+// structure type definition without TAG, no storage allocation
 typedef struct {
 	int X;
 	int Y;
 } Point;
 
+/*
+struct PointX {
+	long double ldX;
+	long double ldY;
+	PointX* pNext; // error : PointX' could not be resolved, unknown type name 'PointX'
+};
+*/
+
+// structure definition with TAG (PointX)
+struct PointX {
+	long double ldX;
+	long double ldY;
+	struct PointX* pNext;
+};
+
+typedef struct TBar {
+	int A;
+	int B;
+	struct Foo* pFoo;
+} Bar;
+
+typedef struct TFoo {
+	int A;
+	int B;
+	//TBar* pBar; // error :  TBar is not a type definition therefore TBar is unknown type, use: "struct TBar* pBar"  or  "Bar* pBar"
+} Foo;
+
+// gcc specific alignment attribute. See also __alignof__ (type)
+struct TAlign {
+    uint8_t  ui8  __attribute__((aligned(16)));
+    uint16_t ui16 __attribute__((aligned(16)));
+};
+
+struct PointX structs_asParameterAndReturnValue( struct PointX point ) {
+
+	return *(point.pNext);
+
+}//structs_asParameterAndReturnValue
+
+// TODO : struct flexible array member C99
+
 void structs( void ) {
 
+	struct { char C; int I; double D; } mixA;
+	mixA.C = 'a';
+	mixA.I = 3;
+	mixA.D = 1.618;
+
+	// mixB's type is different than mixA's type although they are looking the same
+	struct { char C; int I; double D; } mixB = { 'a', 3, 1.618 };
+
+
+	// mixA = mixB; // error : incompatible types struct<anonymous>
+
+	PointF.fX = .01F;
+	PointF.fX = .02F;
+
+	Point pointA = { 2, 3 };
+	Point pointB = { .X = 2, .Y = 3 };
+	Point pointC = { .Y = 4 }; // initializes .X with zero
+
+	// pointA = { 4,5 }         // error
+	pointA = (Point){ 4, 5 };  // ok : "compound literal" assignment
+
+	// !!
+	pointA = (Point){ .Y = 6 }; // !! overrides .X with zero
+
+	//
+	pointA = pointB;
+
+	// PointF
+    PointF.fY = .1F;
+    PointF.fY = .2F;
+
+    //global points
+    g_pointA.X = 1;
+    g_pointA.Y = 2;
+
+    g_pointB.X = 10;
+    g_pointB.Y = 20;
+
+    g_pointC.X = 100;
+    g_pointC.Y = 200;
+
+    // assigment (copy)
+    g_pointA = g_pointB;
+
+    // struct member referencing
+    g_pointer = &g_pointC;
+    (*g_pointer).X = 22;
+    (*g_pointer).Y = 33;
+
+    // member dereferencing operator
+    g_pointer->X = 44;
+    g_pointer->Y = 55;
+
+    struct PointD pointD1;
+    struct PointD pointD2 = { .1, .2 };
+
+    //pointD1 = { .1, .2 };              // error
+    //pointD1 = (PointD){ .1, .2 };      // error
+    pointD1 = (struct PointD){ .1, .2 }; // ok : "compound literal" assignment
+
 	size_t position = 0;
-
-	struct { char C; int I; double D; } mix;
-	Point point = { 2, 3 };
-
-	mix.C = 'a';
-	mix.I = 3;
-	mix.D = 1.618;
-
 	position = offsetof(  Point, Y );
 
 }//structs
 
 //-----------------------------------------------------------------------------
 
+struct TMeasurements {
+
+	unsigned int length;
+	long double values[];
+
+};
+
+void structs_flexibleArrayMember( measurementCount ) {
+
+   struct TMeasurements* pMsr;
+
+   size_t bytesAllocated = sizeof(struct TMeasurements) + measurementCount * sizeof(long double);
+   pMsr = (struct TMeasurements*) malloc( bytesAllocated );
+   pMsr->length = measurementCount;
+
+   const int upperLimit = 10;
+   int loop = measurementCount;
+
+   while ( loop-- )
+	   pMsr->values[ loop ] = (long double)rand();
+
+}//structs_flexibleArrayMember
+
+//-----------------------------------------------------------------------------
+
+#define RDZ_OK                 (0)
+#define RDZ_ARRAY_SIZE_ERROR   (1)
+#define RDZ_RANDOM_RANGE_ERROR (2)
+#define RDZ_ALLOCATION_ERROR   (3)
+
+int getRandomizedArray( int min, int max, const int elementCount, int** outArray ) {
+
+	if ( elementCount <= 0 || elementCount >= INT_MAX / 2 ) {
+       return RDZ_ARRAY_SIZE_ERROR;
+	}
+
+	if ( min > max ) {
+       min ^= max ^= min ^= max;
+	}
+
+	if ( max >= RAND_MAX ) {
+	   return RDZ_RANDOM_RANGE_ERROR;
+	}
+
+	int* intBuffer = (int*) malloc( elementCount * sizeof(int) );
+	if ( intBuffer == NULL ) {
+	   return RDZ_ALLOCATION_ERROR;
+	}
+
+	for ( int i = 0; i < elementCount; i++ ) {
+
+		int value = min + (rand() % (int)(max - min + 1) );
+		intBuffer[ i ] = value;
+
+	}//for
+
+	*outArray = intBuffer;
+
+	return RDZ_OK;
+
+}//getRandomizedArray
+
+//-----------------------------------------------------------------------------
+
+#define SPLT_OK                         (0)
+#define SPLT_SPLIT_INDEX_OUT_OF_BOUNDS  (1)
+#define SPLT_INPUT_ARRAY_IS_NULL        (2)
+#define SPLT_INVALID_ARRAY_LENGTH       (3)
+#define SPLT_ALLOCATION_ERROR           (4)
+
+int split( int const* inArray, const int elementCount, const int splitAfter, int** outLeft, int** outRight ) {
+
+	if ( inArray == NULL ) {
+	   return SPLT_INPUT_ARRAY_IS_NULL;
+	}
+
+	if ( elementCount <= 0 ) {
+	   return SPLT_INVALID_ARRAY_LENGTH;
+	}
+
+	if ( splitAfter > elementCount ) {
+	   return SPLT_SPLIT_INDEX_OUT_OF_BOUNDS;
+	}
+
+	int leftLegth  = splitAfter + 1;
+	int rightLegth = elementCount - leftLegth;
+
+	int* leftBuffer  = (int*) malloc( leftLegth );
+	if ( NULL == leftBuffer ) {
+       return SPLT_ALLOCATION_ERROR;
+	}
+
+	int* rightBuffer = (int*) malloc( rightLegth );
+	if ( NULL == rightBuffer ) {
+	   if ( NULL != leftBuffer ) {
+		  free( leftBuffer );
+	   }
+       return SPLT_ALLOCATION_ERROR;
+	}
+
+	memcpy( leftBuffer,  &inArray[ 0 ], leftLegth * sizeof(int) );
+	memcpy( rightBuffer, &inArray[ leftLegth ], rightLegth * sizeof(int) );
+
+	*outLeft  = leftBuffer;
+	*outRight = rightBuffer;
+
+    return SPLT_OK;
+
+}//split
+
+//-----------------------------------------------------------------------------
 
 int main( int argc, char** argv ) {
 
+	int* array             = NULL;
+	int resultCode         = 0;
+	const int elementCount = 10;
+
+	resultCode = getRandomizedArray( 9, -9, elementCount, &array );
+    if ( RDZ_OK != resultCode ) {
+    	exit( EXIT_FAILURE );
+    }
+
+	int* left  = NULL;
+	int* right = NULL;
+	resultCode = split( array, elementCount, 3, &left, &right );
+    if ( SPLT_OK != resultCode ) {
+    	exit( EXIT_FAILURE );
+    }
+
+	structs_flexibleArrayMember( 4 );
+
+	arrays_variableSize( 3 );
+
+	unions();
+
+	arrays_multiDimensionalJaggedvsFlat();
+	arrays_multiDimensionalJagged();
+	arrays_multiDimensional();
+
+	long long int sum = 0;
+	sum = functions_sum( 3 , 2, 4, 6 );
+	sum = functions_sum( 4 , 1, 3, 5, 7 );
+
+
+	long long int factorial = functions_recursiveFactorial( 5 );
+
+	functions_recursiveFunction();
+
+	sinus( 120 );
+
+	arrays();
+
+	structs();
+
+	literals();
+
+	floatSteps();
+
+	getLatinName( tuesday );
 
 	operators_conditionalExpression();
 	operators_additive();
@@ -2006,7 +2939,7 @@ int main( int argc, char** argv ) {
     everyIdentifierHasAnAddress();
 
     arrays();
-    multiDimensionalArrays();
+    arrays_multiDimensional();
 	initializationOfVariables();
 	sequentialEvaluation();
 	bitManipulation();
