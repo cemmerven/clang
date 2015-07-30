@@ -2970,6 +2970,7 @@ int main( int argc, char** argv ) {
 
 	division();
 
+   
 	typePromotionPromoteToInt();
 
 	// precedence of post increment
