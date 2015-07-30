@@ -2809,7 +2809,8 @@ int getRandomizedArray( int min, int max, const int elementCount, int** outArray
        min ^= max ^= min ^= max;
 	}
 
-	if ( max >= RAND_MAX ) {
+	const int halfRange = RAND_MAX / 2;
+	if ( min <= -halfRange ||  max >= halfRange ) {
 	   return RDZ_RANDOM_RANGE_ERROR;
 	}
 
@@ -2849,7 +2850,7 @@ int split( int const* inArray, const int elementCount, const int splitAfter, int
 	   return SPLT_INVALID_ARRAY_LENGTH;
 	}
 
-	if ( splitAfter > elementCount ) {
+	if ( splitAfter <= 0 || splitAfter > elementCount - 1 ) {
 	   return SPLT_SPLIT_INDEX_OUT_OF_BOUNDS;
 	}
 
