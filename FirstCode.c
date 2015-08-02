@@ -2882,7 +2882,173 @@ int split( int const* inArray, const int elementCount, const int splitAfter, int
 
 //-----------------------------------------------------------------------------
 
+_Bool IsPrimeA( unsigned long long int primeCandidate ) {
+
+	if ( primeCandidate == 1 ) {
+		return false;
+	}
+
+	for ( unsigned long long int number = 3; number < primeCandidate; number++ ) {
+
+	    if ( primeCandidate % number == 0 )
+	       return false;
+
+	}
+
+	return true;
+
+}//IsPrimeA
+
+_Bool IsPrimeB( unsigned long long int primeCandidate ) {
+
+	if ( primeCandidate == 2 || primeCandidate == 3 )
+	  return true;
+
+	_Bool notPrime =
+		(primeCandidate & 1) == 0 ||
+		(primeCandidate % 3) == 0;
+
+	if ( notPrime ) {
+		return false;
+	}
+
+	unsigned long long int root = sqrt( primeCandidate );
+	for ( unsigned long long int number = 5; number < root; number++ ) {
+
+	    if ( primeCandidate % number == 0 )
+	       return false;
+
+	}
+
+	return true;
+
+}//IsPrimeB
+
+
+//-----------------------------------------------------------------------------
+
+_Bool IsPrimeC( unsigned long long int primeCandidate ) {
+
+	if (
+ 	 (primeCandidate == 2  ||
+	  primeCandidate == 3  ||
+	  primeCandidate == 5  ||
+	  primeCandidate == 7  ||
+	  primeCandidate == 11 ||
+	  primeCandidate == 13)
+    ) return true;
+
+	_Bool notPrime =
+		((primeCandidate & 1) == 0)  ||
+		((primeCandidate % 3) == 0)  ||
+		((primeCandidate % 5) == 0)  ||
+		((primeCandidate % 7) == 0)  ||
+		((primeCandidate % 11) == 0) ||
+		((primeCandidate % 13) == 0);
+
+	if ( notPrime ) {
+		return false;
+	}
+
+	unsigned long long int root = sqrt( primeCandidate );
+	for ( unsigned long long int number = 17; number < root; number++ ) {
+
+	    if ( primeCandidate % number == 0 )
+	       return false;
+
+	}
+
+	return true;
+
+}//IsPrimeC
+
+//-----------------------------------------------------------------------------
+
+unsigned int CountMultiplesOf( unsigned int number, unsigned long long int range ) {
+
+	unsigned int numberOfDivisors = (range / number) -1;
+
+	return numberOfDivisors;
+
+}//CountMultiplesOf
+
+//-----------------------------------------------------------------------------
+
+void TestPrimes( void ) {
+
+	_Bool isp = false;
+	isp = IsPrimeA( 1 );
+	isp = IsPrimeA( 2 );
+	isp = IsPrimeA( 3 );
+
+
+
+    FILE* hFile = fopen( "C:\\Users\\john\\git\\FirstCode\\Debug\\primes-first-million-little-endian.bin", "r" );
+    if ( NULL == hFile ) {
+      exit( EXIT_FAILURE );
+    }
+
+    const int million = 1000 * 1000;
+    int *primes = (int*) malloc( million * sizeof(int) );
+
+    fread( primes, million * sizeof(int), 1, hFile );
+    if ( ferror( hFile ) ) {
+
+    	if ( hFile ) {
+    	   fclose( hFile );
+    	}
+        exit( EXIT_FAILURE );
+
+    }//if
+
+	unsigned int count =
+			CountMultiplesOf(3, primes[999423] );
+
+
+    // TODO : test fails where i == 999424 -> primes[i] == 0
+    // test first one million precalculated primes with your function
+    for ( int i = 0; i < 999424 /*million*/; i++ ) {
+
+    	int aPrime = primes[ i ];
+    	if ( ! IsPrimeB( aPrime ) ) {
+
+    		// IF YOUR CONTROL FLOW REACHS THAT POINT, YOUR PRIME TESTING FUNCTION HAS A BUG IN IT !
+            exit( EXIT_FAILURE );
+    	}
+
+	}//for
+
+    for ( int i = 0; i < primes[999424] /*million*/; i++ ) {
+
+    	_Bool isActualPrime = false;
+        for ( int j = 0; j < 999424 /*million*/; j++ ) {
+        	if ( i == primes[j] ) {
+        	   isActualPrime = true;
+        	   break;
+        	}
+        }
+
+        if ( isActualPrime ) {
+        	continue;
+        }
+
+    	if ( IsPrimeB( i ) ) {
+
+    		// IF YOUR CONTROL FLOW REACHS THAT POINT, YOUR PRIME TESTING FUNCTION HAS A BUG IN IT !
+            exit( EXIT_FAILURE );
+    	}
+
+	}//for
+
+}//TestPrimes
+
+//-----------------------------------------------------------------------------
+
+
 int main( int argc, char** argv ) {
+
+
+	TestPrimes();
 
 	int* array             = NULL;
 	int resultCode         = 0;
@@ -2970,7 +3136,6 @@ int main( int argc, char** argv ) {
 
 	division();
 
-   
 	typePromotionPromoteToInt();
 
 	// precedence of post increment
@@ -2993,7 +3158,6 @@ int main( int argc, char** argv ) {
 	int b = 5;
 	swap( &a, &b );
 
-   
 	return EXIT_SUCCESS;
 
 }//main
