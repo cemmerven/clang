@@ -2970,14 +2970,17 @@ _Bool isPrimeC( unsigned long long int primeCandidate ) {
 
 char* concat( const char *s1, const char *s2 ) {
 
-	//reserve +1 for the "null" terminator
-    char *result = malloc( strlen(s1) + strlen(s2) +1 );
+	//reserve +1 for the "null" terminator and zero fill.
+    char *result = calloc( strlen(s1) + strlen(s2) +1 );
     if ( NULL == result ) {
        return NULL;
     }
 
-    strcpy( result, s1 );
-    strcat( result, s2 );
+    if ( s1 )
+       strcpy( result, s1 );
+
+    if ( s2 )
+       strcat( result, s2 );
 
     return result;
 
@@ -3011,7 +3014,6 @@ char pathSeperator() {
    char seperator          = 0;
 
    const char* const sourceFile  = __FILE__;
-   _Bool isUnixPath              = false;
 
    seperator = strchr( sourceFile, unxSeperator ) ? unxSeperator : winSeperator;
 
