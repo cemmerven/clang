@@ -27,6 +27,7 @@
 #include <unistd.h>
 
 #include <time.h>
+
 //-----------------------------------------------------------------------------
 
 void integers( void ) {
@@ -2968,23 +2969,47 @@ _Bool isPrimeC( unsigned long long int primeCandidate ) {
 
 //-----------------------------------------------------------------------------
 
-char* concat( const char *s1, const char *s2 ) {
+char pathSeperator() {
 
+   const char winSeperator = '\\';
+   const char unxSeperator = '/';
+   char seperator          = 0;
+
+   const char* const sourceFile  = __FILE__;
+
+   seperator = strchr( sourceFile, unxSeperator ) ? unxSeperator : winSeperator;
+
+   return seperator;
+
+}//pathSeperator
+
+//-----------------------------------------------------------------------------
+
+char* pathCombine( const char *s1, const char *s2 ) {
+
+	const int reserveSeperators = 3;
 	//reserve +1 for the "null" terminator and zero fill.
-    char *result = calloc( strlen(s1) + strlen(s2) +1 );
+    char *result = calloc( 1, strlen(s1) + strlen(s2) + reserveSeperators );
     if ( NULL == result ) {
        return NULL;
     }
 
+    // TODO : s1 ve s2 nin başında ve sonunda olabilecek separatörlere göre kod düzzenle
+
+    char separator[] = " ";
+    separator[0] = pathSeperator();
+
     if ( s1 )
        strcpy( result, s1 );
+
+    strcat( result, separator );
 
     if ( s2 )
        strcat( result, s2 );
 
     return result;
 
-}//concat
+}//pathCombine
 
 //-----------------------------------------------------------------------------
 
@@ -3004,22 +3029,6 @@ char* replace( char *target, const char from, const char to ) {
     return target;
 
 }//replace
-
-//-----------------------------------------------------------------------------
-
-char pathSeperator() {
-
-   const char winSeperator = '\\';
-   const char unxSeperator = '/';
-   char seperator          = 0;
-
-   const char* const sourceFile  = __FILE__;
-
-   seperator = strchr( sourceFile, unxSeperator ) ? unxSeperator : winSeperator;
-
-   return seperator;
-
-}//pathSeperator
 
 //-----------------------------------------------------------------------------
 
@@ -3048,11 +3057,11 @@ void fileOpenRead( void ) {
 
    workingDirectory = getcwd( workingDirectory, 0 );
 
-   char *filePath = concat( workingDirectory, fileName );
+   char *filePath = pathCombine( workingDirectory, fileName );
    adjustPathSeperator( filePath );
 
-   // open as "r" readonly
-   FILE* hFile = fopen( filePath, "r" );
+   // open as "r" readonly and "b" binary
+   FILE* hFile = fopen( filePath, "rb" );
    if ( NULL == hFile ) {
      exit( EXIT_FAILURE );
    }
@@ -3081,6 +3090,60 @@ void fileOpenRead( void ) {
 
 //-----------------------------------------------------------------------------
 
+int* readPrimes( char fileName[] ) {
+
+	char* workingDirectory = NULL;
+	int *primes = NULL;
+
+	char seperator  = pathSeperator();
+
+	// get current working directory
+	workingDirectory = getcwd( workingDirectory, 0 );
+	if ( NULL == workingDirectory ) {
+	   goto EXIT;
+	}
+
+	char *filePath = pathCombine( workingDirectory, fileName );
+	if ( NULL == filePath ) {
+	   goto EXIT;
+	}
+
+	adjustPathSeperator( filePath );
+
+	// open as "r" readonly and "b" binary
+	FILE* hFile = fopen( filePath, "rb" );
+	if ( NULL == hFile ) {
+	   goto EXIT;
+	}
+
+	const int million = 1000 * 1000;
+	primes = (int*) malloc( million * sizeof(int) );
+	if ( NULL == primes ) {
+	   goto EXIT;
+	}
+
+	fread( primes, million * sizeof(int), 1, hFile );
+	if ( ferror( hFile ) ) {
+	   goto EXIT;
+	}//if
+
+EXIT :
+
+     if ( filePath )
+	    free( filePath );
+
+     if ( workingDirectory )
+	    free( workingDirectory );
+
+     if ( hFile )
+	    fclose( hFile );
+
+	return primes;
+
+}//readPrimes
+
+//-----------------------------------------------------------------------------
+
 void testPrimes( void ) {
 
 	_Bool isp = false;
@@ -3088,28 +3151,12 @@ void testPrimes( void ) {
 	isp = isPrimeA( 2 );
 	isp = isPrimeA( 3 );
 
+	char fileName[] = "primes-first-million-little-endian.bin";
+	int *primes = (int*) readPrimes( fileName );
 
-    FILE* hFile = fopen( "C:\\Users\\john\\git\\FirstCode\\Debug\\primes-first-million-little-endian.bin", "r" );
-    if ( NULL == hFile ) {
-      exit( EXIT_FAILURE );
-    }
-
-    const int million = 1000 * 1000;
-    int *primes = (int*) malloc( million * sizeof(int) );
-
-    fread( primes, million * sizeof(int), 1, hFile );
-    if ( ferror( hFile ) ) {
-
-    	if ( hFile ) {
-    	   fclose( hFile );
-    	}
-        exit( EXIT_FAILURE );
-
-    }//if
-
-    // TODO : test fails where i == 999424 -> primes[i] == 0
+	const int million = 1000 * 1000;
     // test first one million precalculated primes with your function
-    for ( int i = 0; i < 999424 /*million*/; i++ ) {
+    for ( int i = 0; i < million; i++ ) {
 
     	int aPrime = primes[ i ];
     	if ( ! isPrimeB( aPrime ) ) {
@@ -3120,10 +3167,10 @@ void testPrimes( void ) {
 
 	}//for
 
-    for ( int i = 0; i < primes[999424] /*million*/; i++ ) {
+    for ( int i = 0; i < million; i++ ) {
 
     	_Bool isActualPrime = false;
-        for ( int j = 0; j < 999424 /*million*/; j++ ) {
+        for ( int j = 0; j < million; j++ ) {
         	if ( i == primes[j] ) {
         	   isActualPrime = true;
         	   break;
@@ -3145,7 +3192,6 @@ void testPrimes( void ) {
 }//TestPrimes
 
 //-----------------------------------------------------------------------------
-
 
 int main( int argc, char** argv ) {
 
