@@ -23,6 +23,10 @@
 #include <stdint.h>
 #include <stdarg.h>
 
+#include <string.h>
+#include <unistd.h>
+
+#include <time.h>
 //-----------------------------------------------------------------------------
 
 void integers( void ) {
@@ -2882,7 +2886,7 @@ int split( int const* inArray, const int elementCount, const int splitAfter, int
 
 //-----------------------------------------------------------------------------
 
-_Bool IsPrimeA( unsigned long long int primeCandidate ) {
+_Bool isPrimeA( unsigned long long int primeCandidate ) {
 
 	if ( primeCandidate == 1 ) {
 		return false;
@@ -2897,9 +2901,9 @@ _Bool IsPrimeA( unsigned long long int primeCandidate ) {
 
 	return true;
 
-}//IsPrimeA
+}//isPrimeA
 
-_Bool IsPrimeB( unsigned long long int primeCandidate ) {
+_Bool isPrimeB( unsigned long long int primeCandidate ) {
 
 	if ( primeCandidate == 2 || primeCandidate == 3 )
 	  return true;
@@ -2922,12 +2926,12 @@ _Bool IsPrimeB( unsigned long long int primeCandidate ) {
 
 	return true;
 
-}//IsPrimeB
+}//isPrimeB
 
 
 //-----------------------------------------------------------------------------
 
-_Bool IsPrimeC( unsigned long long int primeCandidate ) {
+_Bool isPrimeC( unsigned long long int primeCandidate ) {
 
 	if (
  	 (primeCandidate == 2  ||
@@ -2960,27 +2964,127 @@ _Bool IsPrimeC( unsigned long long int primeCandidate ) {
 
 	return true;
 
-}//IsPrimeC
+}//isPrimeC
 
 //-----------------------------------------------------------------------------
 
-unsigned int CountMultiplesOf( unsigned int number, unsigned long long int range ) {
+char* concat( const char *s1, const char *s2 ) {
 
-	unsigned int numberOfDivisors = (range / number) -1;
+	//reserve +1 for the "null" terminator
+    char *result = malloc( strlen(s1) + strlen(s2) +1 );
+    if ( NULL == result ) {
+       return NULL;
+    }
 
-	return numberOfDivisors;
+    strcpy( result, s1 );
+    strcat( result, s2 );
 
-}//CountMultiplesOf
+    return result;
+
+}//concat
 
 //-----------------------------------------------------------------------------
 
-void TestPrimes( void ) {
+char* replace( char *target, const char from, const char to ) {
+
+    if ( NULL == target ) {
+       return target;
+    }
+
+	size_t length = strlen( target );
+	for ( int i = 0; i < length; i++ ) {
+		if ( target[ i ] == from ) {
+			target[ i ] = to;
+		}
+	}
+
+    return target;
+
+}//replace
+
+//-----------------------------------------------------------------------------
+
+char pathSeperator() {
+
+   const char winSeperator = '\\';
+   const char unxSeperator = '/';
+   char seperator          = 0;
+
+   const char* const sourceFile  = __FILE__;
+   _Bool isUnixPath              = false;
+
+   seperator = strchr( sourceFile, unxSeperator ) ? unxSeperator : winSeperator;
+
+   return seperator;
+
+}//pathSeperator
+
+//-----------------------------------------------------------------------------
+
+// TODO : test under linux and windows
+void adjustPathSeperator( char* path ) {
+
+   const char winSeperator = '\\';
+   const char unxSeperator = '/';
+
+   char seperator = pathSeperator();
+
+   unxSeperator == seperator
+	  ? replace( path, winSeperator, seperator )
+      : replace( path, unxSeperator, seperator );
+
+}//adjustPathSeperator
+
+//-----------------------------------------------------------------------------
+
+void fileOpenRead( void ) {
+
+   char* workingDirectory = NULL;
+   char fileName[] = "/primes-first-million-little-endian.bin";
+   char seperator  = pathSeperator();
+   fileName[ 0 ]   = seperator;
+
+   workingDirectory = getcwd( workingDirectory, 0 );
+
+   char *filePath = concat( workingDirectory, fileName );
+   adjustPathSeperator( filePath );
+
+   // open as "r" readonly
+   FILE* hFile = fopen( filePath, "r" );
+   if ( NULL == hFile ) {
+     exit( EXIT_FAILURE );
+   }
+
+   int prime = 0;
+   const int million = 1000 * 1000;
+   int primeCount = 0;
+   int readCount = -1;
+
+   for ( primeCount = 0; primeCount < million; primeCount++ ) {
+
+	   readCount = fread( &prime, sizeof(prime), 1, hFile );
+	   if ( readCount <= 0 ) {
+		  break;
+	   }
+
+   }//for
+
+
+   fclose( hFile );
+
+   free( filePath );
+   free( workingDirectory );
+
+}//fileOpenRead
+
+//-----------------------------------------------------------------------------
+
+void testPrimes( void ) {
 
 	_Bool isp = false;
-	isp = IsPrimeA( 1 );
-	isp = IsPrimeA( 2 );
-	isp = IsPrimeA( 3 );
-
+	isp = isPrimeA( 1 );
+	isp = isPrimeA( 2 );
+	isp = isPrimeA( 3 );
 
 
     FILE* hFile = fopen( "C:\\Users\\john\\git\\FirstCode\\Debug\\primes-first-million-little-endian.bin", "r" );
@@ -3001,16 +3105,12 @@ void TestPrimes( void ) {
 
     }//if
 
-	unsigned int count =
-			CountMultiplesOf(3, primes[999423] );
-
-
     // TODO : test fails where i == 999424 -> primes[i] == 0
     // test first one million precalculated primes with your function
     for ( int i = 0; i < 999424 /*million*/; i++ ) {
 
     	int aPrime = primes[ i ];
-    	if ( ! IsPrimeB( aPrime ) ) {
+    	if ( ! isPrimeB( aPrime ) ) {
 
     		// IF YOUR CONTROL FLOW REACHS THAT POINT, YOUR PRIME TESTING FUNCTION HAS A BUG IN IT !
             exit( EXIT_FAILURE );
@@ -3032,7 +3132,7 @@ void TestPrimes( void ) {
         	continue;
         }
 
-    	if ( IsPrimeB( i ) ) {
+    	if ( isPrimeB( i ) ) {
 
     		// IF YOUR CONTROL FLOW REACHS THAT POINT, YOUR PRIME TESTING FUNCTION HAS A BUG IN IT !
             exit( EXIT_FAILURE );
@@ -3047,8 +3147,9 @@ void TestPrimes( void ) {
 
 int main( int argc, char** argv ) {
 
+	fileOpenRead();
 
-	TestPrimes();
+	testPrimes();
 
 	int* array             = NULL;
 	int resultCode         = 0;
