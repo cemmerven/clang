@@ -2697,6 +2697,14 @@ struct TAlign {
     uint16_t ui16 __attribute__((aligned(16)));
 };
 
+// TODO : TPerson sorting based on diffwrent fields with function-pointer comparison callbacks
+struct TPerson {
+	char name[55];
+	int heigthAsCm;
+	float weigthAsKg;
+};
+
+
 struct PointX structs_asParameterAndReturnValue( struct PointX point ) {
 
 	return *(point.pNext);
@@ -2934,6 +2942,7 @@ _Bool isPrimeB( unsigned long long int primeCandidate ) {
 
 _Bool isPrimeC( unsigned long long int primeCandidate ) {
 
+	// TODO : benchmark this function against other "isPrime...()" implentations
 	if (
  	 (primeCandidate == 2  ||
 	  primeCandidate == 3  ||
@@ -3095,8 +3104,6 @@ int* readPrimes( char fileName[] ) {
 	char* workingDirectory = NULL;
 	int *primes = NULL;
 
-	char seperator  = pathSeperator();
-
 	// get current working directory
 	workingDirectory = getcwd( workingDirectory, 0 );
 	if ( NULL == workingDirectory ) {
@@ -3125,7 +3132,7 @@ int* readPrimes( char fileName[] ) {
 	fread( primes, million * sizeof(int), 1, hFile );
 	if ( ferror( hFile ) ) {
 	   goto EXIT;
-	}//if
+	}
 
 EXIT :
 
