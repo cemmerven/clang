@@ -814,7 +814,7 @@ void operators_assignment( void ) {
    r = 5;
    r %=  2;
 
-   // TODO : di�er "compound assignment" operat�rleri
+   // TODO : diğer "compound assignment" operatörleri
 
 }//operators_assignment
 
@@ -3200,7 +3200,47 @@ void testPrimes( void ) {
 
 //-----------------------------------------------------------------------------
 
+void memoryManagement_alloc_calloc_realloc_free( void ) {
+
+	char *textA = NULL;
+
+	//textA = "lorem ipsum";// !! DON'T it's risky
+
+	// returned memory block contains "garbage" values.
+	textA = (char *) malloc( 12 );
+	if ( NULL == textA )
+	   goto EXIT;
+
+    strcpy( textA, "lorem ipsum" );
+
+	char *textB = NULL;
+
+	// returned memory block contains "zeroed" values.
+	textB = (char *) calloc( 16, 1 );
+	if ( NULL == textB )
+	   goto EXIT;
+
+    strcpy( textB, " dolor sit amet" );
+
+	size_t sizeA = strlen( textA );
+	size_t sizeB = strlen( textB );
+
+	// after successful realloc, previously malloced-buffer passed as first argument
+	// is no longer valid and should not be "freed()".
+	void* newBlock = realloc( textA, sizeA + sizeB + 1 );
+    textA = newBlock ? (char*) newBlock : textA;
+
+EXIT:
+	textA ? 0 : free( textA );
+	textB ? 0 : free( textB );
+
+}//memoryManagement_alloc_calloc_realloc_free
+
+//-----------------------------------------------------------------------------
+
 int main( int argc, char** argv ) {
+
+	memoryManagement_alloc_calloc_realloc_free();
 
 	fileOpenRead();
 
