@@ -2888,6 +2888,47 @@ void structs( void ) {
 
 //-----------------------------------------------------------------------------
 
+void structs_structArrays( void ) {
+
+	// see disassembly
+	struct TPerson people[ 3 ] = {
+		{ "ayhan", 160, 65.5F  },
+		{ "beyhan", 150, 55.5F },
+		{ "ceyhan", 170, 70.5F }
+	};
+
+	char *pc = NULL;
+	int  i   = 0;
+	float f  = .0F;
+
+	pc = people[ 0 ].name;
+    i  = people[ 0 ].heigthAsCm;
+	f  = people[ 0 ].weigthAsKg;
+
+	pc = people[ 1 ].name;
+    i  = people[ 1 ].heigthAsCm;
+	f  = people[ 1 ].weigthAsKg;
+
+	pc = people[ 2 ].name;
+    i  = people[ 2 ].heigthAsCm;
+	f  = people[ 2 ].weigthAsKg;
+
+	strcpy( people[ 0 ].name, "ayda" );
+	people[ 0 ].heigthAsCm = 152;
+	people[ 0 ].weigthAsKg = 67.5F;
+
+	strcpy( people[ 1 ].name, "beyda" );
+	people[ 1 ].heigthAsCm = 162;
+	people[ 1 ].weigthAsKg = 57.5F;
+
+	strcpy( people[ 2 ].name, "ceyda" );
+	people[ 2 ].heigthAsCm = 162;
+	people[ 2 ].weigthAsKg = 72.5F;
+
+}//structs_structArrays
+
+//-----------------------------------------------------------------------------
+
 struct TMeasurements {
 
 	unsigned int length;
