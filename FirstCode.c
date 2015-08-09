@@ -462,6 +462,7 @@ void pointers2( void ) {
 
 void pointers3( void ) {
 
+	// see disassembly
 	int    a =  3;
 	int   *b = &a;
 	int  **c = &b;
@@ -478,6 +479,7 @@ void pointers3( void ) {
 
 void pointers4( void ) {
 
+   // see disassembly
    int arrI[ 5 ] = { 10, 20, 30, 40, 50 };
 
    int *piA = NULL;
@@ -505,6 +507,72 @@ void pointers4( void ) {
    distance = pldA - pldB;
 
 }//pointers4
+
+//-----------------------------------------------------------------------------
+
+void pointers5( void ) {
+
+   // see disassembly
+   int arr[ 5 ] = { 10, 20, 30, 40, 50 };
+
+   int *pi = NULL;
+
+   pi = arr;
+
+   arr[ 0 ]   = 11;
+   *(arr + 0) = 12;
+   pi[ 0 ]    = 13;
+   *(pi + 0)  = 14;
+
+   arr[ 1 ]   = 22;
+   *(arr + 1) = 23;
+   pi[ 1 ]    = 24;
+   *(pi + 1)  = 25;
+
+   arr[ 2 ]   = 33;
+   *(arr + 2) = 34;
+   pi[ 2 ]    = 35;
+   *(pi + 2)  = 36;
+
+   arr[ 3 ]   = 44;
+   *(arr + 3) = 45;
+   pi[ 3 ]    = 46;
+   *(pi + 3)  = 47;
+
+   arr[ 4 ]   = 55;
+   *(arr + 4) = 56;
+   pi[ 4 ]    = 57;
+   *(pi + 4)  = 58;
+
+}//pointers5
+
+//-----------------------------------------------------------------------------
+
+void pointers6( void ) {
+
+   // see disassembly
+   int *arr = NULL;
+
+   arr = malloc( 5 * sizeof(int) );
+
+   arr[ 0 ]   = 11;
+   *(arr + 0) = 12;
+
+   arr[ 1 ]   = 22;
+   *(arr + 1) = 23;
+
+   arr[ 2 ]   = 33;
+   *(arr + 2) = 34;
+
+   arr[ 3 ]   = 44;
+   *(arr + 3) = 45;
+
+   arr[ 4 ]   = 55;
+   *(arr + 4) = 56;
+
+   free( arr );
+
+}//pointers6
 
 //-----------------------------------------------------------------------------
 
@@ -2525,9 +2593,9 @@ void initializationOfVariables( void ) {
    long long          ll  = 5LL;
    unsigned long long ull = 6ULL;
 
-   float       dA = 1.99F;
+   float       fA = 1.99F;
    double      dB = 2.99;
-   long double dC = 3.99L;
+   long double lC = 3.99L;
 
 
    i = c + 1;
@@ -2538,11 +2606,49 @@ void initializationOfVariables( void ) {
    i = us + 1;
    i = ui + 1;
 
-   dA = dA + i;
+   fA = fA + i;
    dB = dB + 1.99;
-   dC = dA + dB;
+   lC = fA + dB;
 
 }//initializationOfVariables
+
+//-----------------------------------------------------------------------------
+
+void initializationOfArrays( void ) {
+
+   // see disassembly
+   char carA[ 5 ] = "ABCD";
+   char carB[ 5 ] = {'A','B','C','D', 0 };
+   char c         = '\0';
+
+   int iar[ 5 ] = { 65, 66, 67, 68, 69 };
+   int i        = 0;
+
+   float far[ 5 ] = { .1F, .2F, .3F, .4F, .5F };
+   float f        = .0F;
+
+   double dar[ 5 ] = { .1, .2, .3, .4, .5 };
+   double d        = .0;
+
+   long double ldar[ 5 ] = { .1L, .2L, .3L, .4, .5L };
+   long double ld        = .0L;
+
+   iar[ 0 ] = 66;
+   i = iar[ 0 ];
+
+   carA[ 0 ] = 97;
+   c = carA[0];
+
+   far[ 0 ] = .2F;
+   f = far[ 0 ];
+
+   dar[ 0 ] = .2;
+   d = dar[ 0 ];
+
+   ldar[ 0 ] = .2L;
+   ld = dar[ 0 ];
+
+}//initializationOfArrays
 
 //-----------------------------------------------------------------------------
 
@@ -2790,6 +2896,8 @@ struct TMeasurements {
 };
 
 void structs_flexibleArrayMember( measurementCount ) {
+
+   // refer: https://en.wikipedia.org/wiki/Flexible_array_member
 
    struct TMeasurements* pMsr;
 
@@ -3239,6 +3347,12 @@ EXIT:
 //-----------------------------------------------------------------------------
 
 int main( int argc, char** argv ) {
+
+	pointers6();
+
+	initializationOfArrays();
+
+	pointers5();
 
 	memoryManagement_alloc_calloc_realloc_free();
 
