@@ -1,7 +1,7 @@
 /*
  ============================================================================
  Name        : FirstCode.c
- Author      : John Doe
+ Author      : John Doe 1
  Version     :
  Copyright   :
  Description : Sample codes in C99. Requires -std=c99 gcc c-compiler switch
