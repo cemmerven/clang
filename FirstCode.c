@@ -645,12 +645,12 @@ void literals( void ) {
    char c14 = '\t';
    char c15 = '\v';
 
-   char c16 = '\456'; // octal
+   //char c16 = '\456'; // octal
    char c17 = '\xAF'; // hex
 
-   unsigned short     c18 = '\u20AC';
-   unsigned short int c19 = '\u20AC';
-   unsigned int       c20 = '\U40FFAA11';
+   //unsigned short     c18 = '\u20AC';
+   //unsigned short int c19 = '\u20AC';
+   //unsigned int       c20 = '\U40FFAA11';
 
    signed int si1 = -3;
    int        si2 = -3;
