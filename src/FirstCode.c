@@ -2118,9 +2118,9 @@ void bitManipulation() {
 //-----------------------------------------------------------------------------
 
 /*
-  31        30  29  28  27  26  25  24  23  22  21  20  19  18  17  16  15  14  13  12  11  10  .  09  08  07  06  05  04  03  02  01     00
-  |         |                                                                                   .  |                                       |
-  |         |                                                                                      |                                       |
+  31        30  29  28  27  26  25  24  23  22  21  20  19  18  17  16  15  14  13  12  11  10  .  09  08  07  06  05  04  03  02  01  00
+  |         |                                                                                   .  |                                    |
+  |         |                                                                                      |                                    |
   sign-bit  decimal-bits                                                                           fraction-bits
  */
 
@@ -2184,7 +2184,7 @@ static inline void swap( int *x, int *y ) {
     if ( x == y )
     	return;
 
-    *x ^= *y;
+   *x ^= *y;
 	*y ^= *x;
 	*x ^= *y;
 
@@ -2193,7 +2193,7 @@ static inline void swap( int *x, int *y ) {
 //-----------------------------------------------------------------------------
 
 void targetFound( void ) {
-   // ilginç bi'şey yap burada
+   // Do something here
 }//targetFound
 
 void goodGotosAlwaysBranchesForward() {
@@ -2245,12 +2245,11 @@ void goodGotosAlwaysBranchesForward() {
 
 	}//fork
 
-	// bi'şey bulunamadı "targetFound"un üzerinden atla
-    goto CLEANUP;
+   goto CLEANUP;
 
 MULTIBREAK:
 
-    targetFound();
+   targetFound();
 
 CLEANUP:
 
@@ -2295,7 +2294,7 @@ long long int functions_sum( int argc, ... ) {
 
 	for ( int i = 0; i < argc; i++)
 	{
-	   sum += va_arg(valist, int);
+	   sum += va_arg( valist, int );
 	}
 
 	// clean valist left overs
