@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
+
+#include "PathUtilities.h"
 
 //-----------------------------------------------------------------------------
 
@@ -31,6 +34,8 @@ _Bool isPrimeA( unsigned long long int primeCandidate ) {
 	return true;
 
 }//isPrimeA
+
+//-----------------------------------------------------------------------------
 
 _Bool isPrimeB( unsigned long long int primeCandidate ) {
 
