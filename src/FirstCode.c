@@ -28,6 +28,10 @@
 
 #include <time.h>
 
+
+#include "PathUtilities.h"
+#include "PathUtilitiesTester.h"
+
 //-----------------------------------------------------------------------------
 
 void integers( void ) {
@@ -2693,7 +2697,7 @@ struct TMeasurements {
 
 };
 
-void structs_flexibleArrayMember( measurementCount ) {
+void structs_flexibleArrayMember( int measurementCount ) {
 
    // refer: https://en.wikipedia.org/wiki/Flexible_array_member
 
@@ -2751,7 +2755,22 @@ EXIT:
 
 //-----------------------------------------------------------------------------
 
+implicitlyTypedVariableA;
+impTVB = 2;
+
+implicitFunDec( value ) {
+
+   unsigned impTVC = 3;
+
+}//implicitFunDec
+
+//-----------------------------------------------------------------------------
+
 int main( int argc, char** argv ) {
+   
+   //pathCombineTester();
+
+   implicitFunDec( 2 );
 
 	pointers6();
 
@@ -2787,8 +2806,6 @@ int main( int argc, char** argv ) {
 	structs();
 
 	literals();
-
-	floatSteps();
 
 	operators_conditionalExpression();
 	operators_additive();

@@ -11,6 +11,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+
+//-----------------------------------------------------------------------------
+
+static char* replace( char*, const char, const char ); 
 
 //-----------------------------------------------------------------------------
 
@@ -30,50 +35,54 @@ char pathSeperator( void ) {
 
 //-----------------------------------------------------------------------------
 
+ char _emptyText[] = "";
+
 char* pathCombine( const char *s1, const char *s2 ) {
 
-	const int reserveSeperators = 3;
-	//reserve +1 for the "null" terminator and zero fill.
-    char *result = calloc( 1, strlen(s1) + strlen(s2) + reserveSeperators );
-    if ( NULL == result ) {
-       return NULL;
-    }
+   size_t s1Len = strlen( s1 );      
+   size_t s2Len = strlen( s2 );  
+   //reserve +1 for the "null" terminator and zero fill.
+   
+   if ( s1Len + s2Len == 0 ) {
+      return _emptyText;
+   }
 
-    // TODO : s1 ve s2 nin başında ve sonunda olabilecek separatörlere göre kod düzzenle
+   const int reserveSeperators = 2;
+   char *result = malloc( s1Len + s2Len + reserveSeperators );
+   if ( NULL == result ) {
+      return NULL;
+   }
 
-    char separator[] = " ";
-    separator[0] = pathSeperator();
+   char *cursor = result;
+   
+   //char separator[] = " ";
+   char mark = pathSeperator();
+   //separator[0] = pathSeperator();
 
-    if ( s1 )
-       strcpy( result, s1 );
+   if ( s1 != NULL && s1Len > 0 ) {
 
-    strcat( result, separator );
+      memcpy( cursor, s1, s1Len );
+      cursor += s1Len;
+   
+   }//if
 
-    if ( s2 )
-       strcat( result, s2 );
+ 
+   if ( s2 != NULL && s2Len > 0 ) {
 
-    return result;
+      *cursor++ = mark; 
+
+      cursor += s1[ s1Len - 1 ] == mark ? 1 : 0;
+      size_t start = s2[ 0 ] == mark ? 1 : 0;
+      size_t size =  s2Len - start;
+      memcpy( cursor, &s2[ start ], size );
+      
+      cursor[ size ] = '\0';  
+       
+   }//if
+
+   return result;
 
 }//pathCombine
-
-//-----------------------------------------------------------------------------
-
-char* replace( char *target, const char from, const char to ) {
-
-    if ( NULL == target ) {
-       return target;
-    }
-
-	size_t length = strlen( target );
-	for ( int i = 0; i < length; i++ ) {
-		if ( target[ i ] == from ) {
-			target[ i ] = to;
-		}
-	}
-
-    return target;
-
-}//replace
 
 //-----------------------------------------------------------------------------
 
@@ -86,10 +95,28 @@ void adjustPathSeperator( char* path ) {
    char seperator = pathSeperator();
 
    unxSeperator == seperator
-	  ? replace( path, winSeperator, seperator )
+	   ? replace( path, winSeperator, seperator )
       : replace( path, unxSeperator, seperator );
 
 }//adjustPathSeperator
 
 //-----------------------------------------------------------------------------
 
+static char* replace( char *target, const char from, const char to ) {
+
+   if ( NULL == target ) {
+       return target;
+   }
+
+	size_t length = strlen( target );
+	for ( int i = 0; i < length; i++ ) {
+		if ( target[ i ] == from ) {
+			target[ i ] = to;
+		}
+	}
+
+   return target;
+
+}//replace
+
+//-----------------------------------------------------------------------------

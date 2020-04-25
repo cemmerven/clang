@@ -11,14 +11,22 @@
 				"-lm",
 				"${workspaceFolder}\\src\\*.c",
 				"-o",
-				"${workspaceFolder}\\bin\\${fileBasenameNoExtension}.exe"
+				"${workspaceFolder}\\bin\\main.exe"
 			],
 			"options": {
 				"cwd": "C:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin"
 			},
-			"problemMatcher": [
-				"$gcc"
-			],
+			"problemMatcher": { 
+				"base": "$gcc",
+				"fileLocation": [ "absolute" ],
+				"pattern": {
+				   "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)$",
+				   "file": 1,
+				   "line": 2,
+				   "column": 3,
+				   "message": 4
+				}
+			},
 			"group": {
 				"kind": "build",
 				"isDefault": true
