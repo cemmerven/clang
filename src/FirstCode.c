@@ -506,125 +506,78 @@ void pointersConstantPointers( void ) {
 
 //-----------------------------------------------------------------------------
 
-void literals( void ) {
+void arrays( void ) {
 
-   // size as multiples of char
+   //int arrA[];  // error: array size missing
+   int arrA1[] = {};
+   int arrA2[] = {};
+   int arrA3[] = {};
+   int arrB[ 0 ];
+   int arrC[ 5 ];
+
+
+   char lettersA[] = { 65, 66, 67, 68, 69 };
+   char lettersB[] = { 'A','B','C','D','E' };
+
+   char stringA[] = { 'A','B','C','D','E', 0 };
+   char stringB[] = { 'A','B','C','D','E', '\0' };
+   char stringC[] = { "ABCDE" };
+
+   wchar_t unicodeA[] = { L'Ğ', L'Ü', L'Ş', L'İ', L'Ö', L'Ç', 0 };
+   wchar_t unicodeB[] = L"ĞÜŞİÖÇ";
+
+   int arrQ[ 2 ] = { 1, 2, 3 }; // initialize the first 2, discard the 3rd.
+   int arrW[ 3 ] = { 1, 2, 3 }; // initialize all.
+   int arrX[ 4 ] = { 1, 2, 3 }; // initialize the first 3, leave 4th uninitialized.
+   int arrY[ 5 ] = { [2] = 30 };// initialize the 3rd. initialize the rest with zero.
+   int arrZ[ 5 ] = {};          // initialize all with zero.
+
    size_t size = 0;
+   int count   = 0;
 
-   // GCC -std=c99 komut satırı parametresi ve #include<stdbool.h> gerekli
-   _Bool result = false;
+   size = sizeof( arrA1 );
+   size = sizeof( arrB );
 
-   /*
-   Decimal: 97
-   Hex    : 0x61
-   Binary : 0b01100001
-   Octal  : 0141
-   */
-   char c = 0;
+   size  = sizeof( arrC );
+   size  = sizeof arrC;
+   count = sizeof( arrC ) / sizeof( int );
 
-   c = 97;   // decimal (base 10) literal
-   c = 0x61; // hexadecimal (base 16) literal
-   c = 0141; // octal (base 8) literal
-   c = 'a';  // character literal
+   size = sizeof( lettersA );
+   size = sizeof( lettersB );
 
-   // binary literal, gcc specific
-   c = 0b01100001;
+   size = sizeof( stringA );
+   size = sizeof( stringB );
+   size = sizeof( stringC );
 
-   // single char literals (ASCII)
-   char c01 = 'a';
-   char c02 = -67;
-   char c03 = '\0';
-   char c04 = 0;
+   size = sizeof( wchar_t );
+   size = sizeof( unicodeA );
 
-   char c05 = ' ';
-   char c06 = '\\';
-   //char c07 = ''';
+   size  = sizeof( unicodeB );
+   count = sizeof( unicodeB ) / sizeof( wchar_t );
 
-   // non printable chars (escape sequence)
-   char c08 = '"';
-   char c09 = '\a';
-   char c10 = '\b';
-   char c11 = '\f';
-   char c12 = '\n';
-   char c13 = '\r';
-   char c14 = '\t';
-   char c15 = '\v';
+   size = sizeof( arrW );
+   size = sizeof( arrX );
+   size = sizeof( arrY );
 
-   //char c16 = '\456'; // octal
-   char c17 = '\xAF'; // hex
+   size = sizeof stringB;
+   size = sizeof( arrX );
+   size = sizeof( arrY );
 
-   //unsigned short     c18 = '\u20AC';
-   //unsigned short int c19 = '\u20AC';
-   //unsigned int       c20 = '\U40FFAA11';
-
-   signed int si1 = -3;
-   int        si2 = -3;
-
-   long int liA = 10L;
-   long     liB = 10L;
-
-   long long int  lliA = 10LL;
-   long long      lliB = 10LL;
-
-   unsigned long long int ulliA = 10ULL;
-   unsigned long long     ulliB = 10ULL;
-
-   char text01[] = "hello";
-   //char text02[] = "I'm";
-   //char text03[] = "C:\Windows\System32\drivers\";
-   //char text04[] = "he said "hello"";
-   //char text05[] = "he said "hello"";
-
-   // UNICODE char literal
-   wchar_t wc01 = L'ç';
-   size = sizeof( wc01 );
-
-   // UNICODE string literal
-   wchar_t text06[] = L"ĞÜŞİÖÇ ğüşiöç Iı";
-   size = sizeof( text06 );
-
-   // IEEE 754 single precision floating point number (4 Byte)
-   float f01 = 0;
-   float f02 = .0;
-   float f03 = .0F;
-   float f04 = 3.14F;
-   float f05 = FLT_EPSILON;
-
-   float pi          = 3.14159;
-   float aMole       = 6.02E23;
-   float anotherMole = 6.022e23;
-
-   float electronCharge = 1.60217657e-19;
-   float protonMass     = 1.67262178e-27;
-
-   // IEEE 754 double precision floating point number (8 Byte)
-   double d01 = .0;
-   double d02 = .456;
-   double d03 = DBL_EPSILON;
-
-   // intel specific extended 80bit (10 Byte)
-   long double ldGR = 1.618L;
-   long double ldPI = 3.14159265358979323846264338328L;
-   long double ld01 = LDBL_EPSILON;
-
-   /* HEXADECIMAL FLOATS
-    0x   .  13 x 4 = 52 decimal digits  (Power of 2 decimal digits)
-            13 hexadecimal digits       (P - decimal)
-   (0x1) . (999999999999A)              P(-4)
-   */
-   // C99 specific IEEE 754 double precision floating point HEXADECIMAL (base 16) literal
-   // 1.100110011001100110011001100110011001100110011001101 x 2^(-4).
-   double d04 = 0x1.999999999999Ap-4;
-
-   double d05 = 0xF.999999999999aP-4;
-   double d06 = 0xF.FFFFFFFFFFFFFP-4;
-   double d07 = 0x1p-1;
-   double d08 = 0x2p-1;
-   double d09 = 0x3p-1;
+   size  = sizeof( arrC );
+   size  = sizeof arrC;
 
 
-}//literals
+   arrA1[ 0 ] = 1;
+   arrA2[ 0 ] = 2;
+   arrA3[ 0 ] = 3;
+   arrB[ 0 ]  = 1;
 
+   arrC[ 0 ] = 10;
+   arrC[ 1 ] = 20;
+
+   stringC[0] = 'F';
+
+}//arrays
 //-----------------------------------------------------------------------------
 
 void everyIdentifierHasAnAddress( void ) {
