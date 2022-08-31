@@ -114,7 +114,7 @@ void decimals_Float( void ) {
    fA = FLT_MIN;
    fA = FLT_MAX;
 
-   // precision  0.000000
+   // mantissa, precision  0.000000
    count = FLT_DIG;
 
    // base 10 of the exponent part of a float.
