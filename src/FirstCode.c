@@ -106,28 +106,31 @@ void decimals_Float( void ) {
    size = sizeof( fA );
 
    // bit count
-   size =  CHAR_BIT * sizeof( float );
+   size = CHAR_BIT * sizeof( float );
 
-   _Bool result = true;
-
+   // include float.h
    fA = FLT_MIN;
    fA = FLT_MAX;
 
    // precision  0.000000
    count = FLT_DIG;
 
-   //  base 10 of the exponent part of a float.
+   // base 10 of the exponent part of a float.
    value = FLT_MIN_10_EXP;
    value = FLT_MAX_10_EXP;
 
+   float epsilon = FLT_EPSILON;
+
    fA = .0F / .0F;
 
-   fB = sqrtf( -1.00F );
+   fB = sqrtf( -1.00F ); // math.h
    fB = 1.0F / .00F;
    fB = INFINITY;
 
    float posInf =  1.0F / 0.0F;
    float negInf = -1.0F / 0.0F;
+
+   _Bool result = true;
 
    fA = NAN;
    result = fA == fA;
