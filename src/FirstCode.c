@@ -94,6 +94,7 @@ void integers( void ) {
 
 // refer: www.stackoverflow.com/questions/8341395/what-is-a-subnormal-floating-point-number
 // refer: www.en.wikipedia.org/wiki/Subnormal_number
+// https://observablehq.com/@rreusser/half-precision-floating-point-visualized
 void decimals_Float( void ) {
 
    float fA = .0F;
