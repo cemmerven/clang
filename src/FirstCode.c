@@ -34,22 +34,39 @@
 
 //-----------------------------------------------------------------------------
 
+itX = 0; // implicitly typed int
+itY = 0; // implicitly typed int
 void integers( void ) {
 
-	char c    = 0;
-	int count = 0;
-	int value = 0;
+	char          c  = 0;
+	signed char   sc = 0;
+	unsigned char uc = 0;
 
-	int           a = 1;
-	unsigned int ub = 1;
+	short         s  = 0;
+	signed short  ss = 0;
+	unsigned char us = 0;
+
+	int          i  = 0;
+	signed int   si = 0;
+	unsigned int ui = 0;
+
+	signed   sn = 0; // int
+	unsigned un = 0; // int
+
+	long          l  = 0;
+	signed long   sl = 1;
+	unsigned long ul = 1;
+
+	long long          ll  = 0;
+	signed long long  sll  = 1;
+	unsigned long long ull = 1;
 
 	size_t size = 0;
 
-   // platform dependant and may vary platform to platform  
-	count = CHAR_BIT;
-
-	value = CHAR_MIN;
-	value = CHAR_MAX;
+   // platform dependant and may vary platform to platform ( limits.h )
+	int bitCount = CHAR_BIT;
+	int value = CHAR_MIN;
+	value     = CHAR_MAX;
 
 	size = sizeof( char );
     //size = sizeof int;  //syntax error
@@ -62,14 +79,14 @@ void integers( void ) {
 
 	size = sizeof( int );
 	size = sizeof( unsigned int );
-	count = CHAR_BIT * sizeof( unsigned int );
+	bitCount = CHAR_BIT * sizeof( unsigned int );
 
-	size = sizeof( a );
-	size = sizeof( ub );
+	size = sizeof( i );
+	size = sizeof( ui );
 
-	ub = (unsigned) 0xFFFFFFFF;
-	a  = (signed) ub;
-    ub = 0xFFFFFFFF;
+	ui = (unsigned) 0xFFFFFFFF;
+	i  = (signed) ui;
+    ui = 0xFFFFFFFF;
 
 }//integers
 
