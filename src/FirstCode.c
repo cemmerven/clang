@@ -92,6 +92,8 @@ void integers( void ) {
 
 //-----------------------------------------------------------------------------
 
+// refer: www.stackoverflow.com/questions/8341395/what-is-a-subnormal-floating-point-number
+// refer: www.en.wikipedia.org/wiki/Subnormal_number
 void decimals_Float( void ) {
 
    float fA = .0F;
@@ -133,7 +135,15 @@ void decimals_Float( void ) {
    _Bool result = true;
 
    fA = NAN;
+
+   result = fA == NAN;
    result = fA == fA;
+
+   result = NAN == NAN;
+   result = NAN != NAN;
+
+   // include math.h
+   result = isnan( fA );
 
 }//decimals_Float
 
