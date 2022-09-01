@@ -2126,17 +2126,38 @@ void typePromotion( void ) {
 
 void typePromotionPromoteToInt( void ) {
 
-	// see disassembly
+	// see disassembly ( sign extend instructions )
 	// all ranks lower than int (signed or unsigned), promote to int
 	_Bool b =  false;
 	char  c =  'a';
 	short s =  -8;
 
 	int r = 0;
+	int d = 1;
+	d = b + b + b;
 
 	r = b + c + s;
 
 }//typePromotionPromoteToInt
+
+//-----------------------------------------------------------------------------
+
+void typePromotionPromoteToInt2( void ) {
+
+	// see disassembly ( sign extend instructions )
+	// all ranks lower than int (signed or unsigned), promote to int
+
+	short s1 = -5;
+	short s2 = 3;
+
+	s2 = -s2;
+	s1 = s1 + s2;
+
+	int r = s1 + s1;
+
+	r = s1 + s2;
+
+}//typePromotionPromoteToInt2
 
 //-----------------------------------------------------------------------------
 
