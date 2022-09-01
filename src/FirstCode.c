@@ -2143,7 +2143,7 @@ void typePromotionPromoteToInt( void ) {
 void typePromotionSameWidth( void ) {
 
 	// see disassembly
-	// same size different rank
+	// same size (representation) different rank
 	signed   int negativeOne =  -1;
 	unsigned int positiveOne =  +1;
 
