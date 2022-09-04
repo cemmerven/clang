@@ -881,6 +881,11 @@ void operators_multiplicative( void ) {
    //fc = fc % fa; // ?
    //fc = fc % ia; // ?
 
+   // remainder
+   int a =  3 % -2;
+   int b = -3 %  2;
+   int c = -3 % -2;
+	
 }//operators_multiplicative
 
 //-----------------------------------------------------------------------------
