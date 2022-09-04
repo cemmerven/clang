@@ -885,10 +885,11 @@ void operators_multiplicative( void ) {
 
 //-----------------------------------------------------------------------------
 
-int remainder( int a, int b ) {
-	
+// remainder: causes conflict 
+int Remainder( int a, int b ) {
+
    return a - (a / b) * b;
-   
+
 }
 
 //-----------------------------------------------------------------------------
