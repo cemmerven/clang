@@ -34,17 +34,18 @@
 
 //-----------------------------------------------------------------------------
 
-itX = 0; // implicitly typed int
+itX;     // implicitly typed int
 itY = 0; // implicitly typed int
 void integers( void ) {
-
+    
+	// char's signedness is implementation specific
 	char          c  = 0;
 	signed char   sc = 0;
 	unsigned char uc = 0;
 
-	short         s  = 0;
-	signed short  ss = 0;
-	unsigned char us = 0;
+	short          s  = 0;
+	signed short   ss = 0;
+	unsigned short us = 0;
 
 	int          i  = 0;
 	signed int   si = 0;
@@ -60,6 +61,13 @@ void integers( void ) {
 	long long          ll  = 0;
 	signed long long  sll  = 1;
 	unsigned long long ull = 1;
+
+	// fixed length across platforms (  stdint.h or inttypes.h )
+	int16_t  i16  = 0;
+	uint16_t ui16 = 0;
+
+	int32_t  i32  = 0;
+	uint32_t ui32 = 0;
 
 	size_t size = 0;
 
@@ -88,9 +96,13 @@ void integers( void ) {
 	i  = (signed) ui;
     ui = 0xFFFFFFFF;
 
+    // !
+    // i = ui / ( i + 1 );
+
 }//integers
 
 //-----------------------------------------------------------------------------
+
 
 // refer: www.stackoverflow.com/questions/8341395/what-is-a-subnormal-floating-point-number
 // refer: www.en.wikipedia.org/wiki/Subnormal_number
