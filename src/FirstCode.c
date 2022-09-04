@@ -866,6 +866,9 @@ void operators_multiplicative( void ) {
    fc = fa * fb;
    fc = fc / fa;
 
+   //fc = fc % fa; // ?
+   //fc = fc % ia; // ?
+
 }//operators_multiplicative
 
 //-----------------------------------------------------------------------------
