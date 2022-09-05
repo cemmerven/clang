@@ -625,6 +625,53 @@ int modulo( int a, int b ) {
 
 //-----------------------------------------------------------------------------
 
+void operators_additive( void ) {
+
+   // see disassembly
+   char ca = 2;
+   char cb = 3;
+   char cc = 0;
+
+   short sa = 2;
+   short sb = 3;
+   short sc = 0;
+
+   int ia = 2;
+   int ib = 3;
+   int ic = 0;
+
+   unsigned int ua = 2;
+   unsigned int ub = 3;
+   unsigned int uc = 0;
+
+   float fa = .2F;
+   float fb = .3F;
+   float fc = .0F;
+
+   cc = ca + cb;
+   cc = cb - ca;
+   cc = ca - cb;
+
+   sc = sa + sb;
+   sc = sb - sa;
+   sc = sa - sb;
+
+   ic = ia + ib;
+   ic = ib - ia;
+   ic = ia - ib;
+
+   uc = ua + ub;
+   uc = ub - ua;
+   uc = ua - ub;
+
+   fc = fa + fb;
+   fc = fb - fa;
+   fc = fa - fb;
+
+}//operators_additive
+
+//-----------------------------------------------------------------------------
+
 void operators_binary( void ) {
 
    // see disassembly
