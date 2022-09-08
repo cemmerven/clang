@@ -2382,6 +2382,28 @@ void evaluationOrderC( void ) {
 
 //-----------------------------------------------------------------------------
 
+void evaluationOrderD( void ) {
+
+   int a = 3;
+   int b = 2;
+   int c = 1;
+
+   int r = 0;
+
+   pi = &a;
+
+   if ( a > b > c ) {
+      r = 5;
+   }
+
+   r = 3 + b > c;
+
+   r = 3 + true > 0;
+
+}//evaluationOrderD
+
+//-----------------------------------------------------------------------------
+
 void division( void ) {
 
    // see disassembly
