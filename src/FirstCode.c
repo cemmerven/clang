@@ -1372,6 +1372,101 @@ void controlFlow_Switch() {
 
 //-----------------------------------------------------------------------------
 
+void controlFlow_Switch2( void ) {
+
+   int a = 2;
+   int b = 3;
+   int c = 4;
+   int d = 5;
+
+   int r;
+
+
+   if ( a == 1 ) {
+
+	  r = b;
+
+   }
+
+   if ( a == 2 ) {
+
+       r = c;
+
+   }
+
+   if ( a == 3 ) {
+
+	r = d;
+
+   }
+
+   r = 0;
+   if ( a == 1 ) {
+
+	  r = b;
+
+   } else if ( a == 2 ) {
+
+       r = c;
+
+   } else if ( a == 3 ) {
+
+	r = d;
+
+   }
+
+   r = 0;
+   switch ( a ) {
+
+     case 1 :
+ 	      r = a;
+        break;
+
+     case 2 :
+ 	     r = b;
+ 	    break;
+
+     case 3 :
+	    r = c;
+	    break;
+
+     case 4 :
+	    r = d;
+	    break;
+
+     default:
+    	 break;
+
+   }
+
+   r = 0;
+   switch ( a ) {
+
+     case 1 :
+ 	      r = a;
+        return;
+
+     case 2 :
+ 	     r = b;
+         return;
+
+     case 3 :
+	    r = c;
+        return;
+
+     case 4 :
+	    r = d;
+	    return;
+
+     default:
+    	return;
+
+   }
+
+}//controlFlow_Switch2
+
+//-----------------------------------------------------------------------------
+
 /*
  * switch sample : lookup table
  */
