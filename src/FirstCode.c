@@ -1155,15 +1155,25 @@ void controlFlow_if() {
 
    if ( result )
       c = 1;
+
+   c = 0;	
+   if ( a < b )
+      c = 1;
+
+   if ( ! ( a < b ) )
+      c = 0;
+	
+   if ( result )
+      c = 1;
    else
-	  c = 0;
+      c = 0;
 
    if ( a < b )
       c = 1;
    else
-	  c = 0;
+      c = 0;
 
-   if ( !(a < b) )
+   if ( ! ( a < b ) )
       c = 0;
 
 
@@ -1203,6 +1213,64 @@ void controlFlow_if() {
 
 
 }//controlFlow_if
+
+//-----------------------------------------------------------------------------
+
+void foo( void ) {
+}
+
+void controlFlow_if2( void ) {
+
+   int a = 2;
+   int b = 3;
+   int c = 4;
+   int d = 5;
+
+   int r;
+
+  if ( a > b )
+     r = a;
+  else
+     r = b;
+
+  r = a > b ? a : b ;
+
+  if ( a + 1 > b )
+     foo();
+  else
+     foo();
+
+  if ( a >= b )
+     r = a;
+  else
+     r = b;
+
+  if ( a + 2 >= b )
+     foo();
+  else
+     foo();
+
+  if ( a < b )
+     r = a;
+  else
+     r = b;
+
+  if ( a < b )
+     foo();
+  else
+     foo();
+
+  if ( a <= b )
+     r = a;
+  else
+     r = b;
+
+  if ( a <= b )
+     foo();
+  else
+     foo();
+
+}//controlFlow_if2
 
 //-----------------------------------------------------------------------------
 
