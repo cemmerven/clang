@@ -1218,28 +1218,45 @@ void controlFlow_if() {
 
 void foo( void ) {
 }
+void bar( void ) {
+}
 
 void controlFlow_if2( void ) {
 
-   int a = 2;
-   int b = 3;
-   int c = 4;
-   int d = 5;
+  // see disassembly
+  int a = 2;
+  int b = 3;
+  int c = 4;
+  int d = 5;
 
-   int r;
+  int r;
 
+  if ( a > b )
+     r = a;
+
+  r = 0;
   if ( a > b )
      r = a;
   else
      r = b;
 
+  r = 0;
   r = a > b ? a : b ;
 
   if ( a + 1 > b )
      foo();
-  else
-     foo();
 
+  bar();
+
+  if ( a + 1 > b )
+     foo();
+  else
+     bar();
+
+  if ( a >= b )
+     r = a;
+
+  r = 0;
   if ( a >= b )
      r = a;
   else
@@ -1247,9 +1264,21 @@ void controlFlow_if2( void ) {
 
   if ( a + 2 >= b )
      foo();
-  else
-     foo();
 
+  bar();
+
+  if ( a + 2 >= b )
+     foo();
+  else
+     bar();
+
+  r = 0;
+  if ( a < b )
+     r = a;
+
+  r = b;
+
+  r = 0;
   if ( a < b )
      r = a;
   else
@@ -1257,9 +1286,21 @@ void controlFlow_if2( void ) {
 
   if ( a < b )
      foo();
-  else
-     foo();
 
+  bar();
+
+  if ( a < b )
+     foo();
+  else
+     bar();
+
+  r = 0;
+  if ( a <= b )
+     r = a;
+
+  r = b;
+
+  r = 0;
   if ( a <= b )
      r = a;
   else
@@ -1267,8 +1308,13 @@ void controlFlow_if2( void ) {
 
   if ( a <= b )
      foo();
-  else
+
+  bar();
+
+  if ( a <= b )
      foo();
+  else
+     bar();
 
 }//controlFlow_if2
 
